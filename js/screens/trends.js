@@ -8,7 +8,7 @@ import {
 } from '../ui.js';
 import * as store from '../store.js';
 import { lineChart, eventRail } from '../charts.js';
-import { CHART_KEYS, EVENT_TYPES, analyte, fmtNum, evaluate, refText } from '../catalog.js';
+import { CHART_KEYS, EVENT_TYPES, analyte, fmtNum, evaluate, refText, URINE_ON } from '../catalog.js';
 import { renderCalendar } from './calendar.js';
 import { labsNav } from './labsnav.js';
 
@@ -224,7 +224,7 @@ function dayCard(day) {
   const bits = [];
   if (day.temp != null) bits.push(['Температура', fmtNum(day.temp, 1) + ' °C']);
   if (day.mood) bits.push(['Самочувствие', ['плохо', 'так себе', 'нормально', 'хорошо', 'отлично'][day.mood - 1]]);
-  if (day.urine) bits.push(['Цвет мочи', 'ступень ' + day.urine + ' из 6']);
+  if (URINE_ON && day.urine) bits.push(['Цвет мочи', 'ступень ' + day.urine + ' из 6']);
   if (day.sleep) bits.push(['Сон', day.sleep + ' из 5']);
   if (day.load) bits.push(['Нагрузка', day.load + ' из 5']);
   if (day.stress) bits.push(['Стресс', day.stress + ' из 5']);

@@ -14,7 +14,7 @@ import {
   fmtDate, fmtMonthYear, fmtRelative, plural,
 } from '../ui.js';
 import * as store from '../store.js';
-import { URINE, MOODS, SYMPTOMS, fmtNum } from '../catalog.js';
+import { URINE, URINE_ON, MOODS, SYMPTOMS, fmtNum } from '../catalog.js';
 import { labsNav } from './labsnav.js';
 import { openCheckIn } from './checkin.js';
 
@@ -28,14 +28,6 @@ const METRICS = [
     legend: () => MOODS.map((m) => ({ css: m.css, label: m.face })),
     hint: 'От «плохо» до «отлично»',
     describe: (v) => MOODS[v - 1].label,
-  },
-  {
-    id: 'urine', label: 'Цвет мочи', icon: 'droplet',
-    get: (d) => d && d.urine,
-    color: (v) => URINE[v - 1].css,
-    legend: () => URINE.map((u) => ({ css: u.css, label: String(u.n) })),
-    hint: 'От светло-жёлтого до цвета крепкого чая',
-    describe: (v) => URINE[v - 1].label,
   },
   {
     id: 'temp', label: 'Температура', icon: 'thermo',
@@ -288,7 +280,7 @@ function openDay(date, ctx) {
 
       d ? h('.card.card--pad0', null,
           row('Самочувствие', d.mood ? MOODS[d.mood - 1].face + ' ' + MOODS[d.mood - 1].label : null),
-          row('Цвет мочи', d.urine ? URINE[d.urine - 1].label : null),
+          URINE_ON ? row('Цвет мочи', d.urine ? URINE[d.urine - 1].label : null) : null,
           row('Температура', d.temp != null ? fmtNum(d.temp, 1) + ' °C' : null),
           row('Сон', d.sleep ? d.sleep + ' из 5' : null),
           row('Нагрузка', d.load ? d.load + ' из 5' : null),

@@ -7,7 +7,7 @@ import {
   h, icon, sheet, toast, tap, today, addDays, nowTime, readFileAsDataURL,
 } from '../ui.js';
 import * as store from '../store.js';
-import { EVENT_TYPES, URINE, fmtNum, therapyName } from '../catalog.js';
+import { EVENT_TYPES, URINE, URINE_ON, fmtNum, therapyName } from '../catalog.js';
 import { openPanelPicker, openScanDemo } from './labs.js';
 import { openCheckIn } from './checkin.js';
 import { openSos } from './sos.js';
@@ -27,7 +27,10 @@ const MAIN = [
 
 const MORE = [
   { id: 'temp',  icon: 'thermo',   label: 'Температура',  sub: 'Отдельное измерение сейчас' },
-  { id: 'urine', icon: 'droplet',  label: 'Цвет мочи',    sub: 'Отметить отдельно, за любой день' },
+  /* цвет мочи спрятан выключателем URINE_ON, см. catalog.js */
+  ...(URINE_ON
+    ? [{ id: 'urine', icon: 'droplet', label: 'Цвет мочи', sub: 'Отметить отдельно, за любой день' }]
+    : []),
   { id: 'inf',   icon: 'droplet',  label: 'Инфузия',      sub: 'Отметить, что прокапали' },
   { id: 'med',   icon: 'meds',     label: 'Лекарство',    sub: 'Приём, пропуск или перенос' },
   { id: 'event', icon: 'calendar', label: 'Событие',      sub: 'Простуда, стресс, госпитализация' },

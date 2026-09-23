@@ -17,7 +17,7 @@
 
 import { h, icon, sheet, toast, tap, today, fmtDate } from '../ui.js';
 import * as store from '../store.js';
-import { MOODS, URINE, SYMPTOMS, fmtNum } from '../catalog.js';
+import { MOODS, URINE, URINE_ON, SYMPTOMS, fmtNum } from '../catalog.js';
 
 const QUICK_TEMPS = [36.6, 37.0, 37.5, 38.0, 38.5];
 
@@ -69,7 +69,7 @@ export function openCheckIn(ctx, { date = today() } = {}) {
     const list = [stepMood, stepTemp];
     const badDay = (draft.mood != null && draft.mood <= 3) || (draft.temp != null && draft.temp >= 37.3);
     if (badDay) list.push(stepSymptoms);
-    if (store.state.settings.urineDaily) list.push(stepUrine);
+    if (URINE_ON && store.state.settings.urineDaily) list.push(stepUrine);
     if (evening) list.push(stepEvening);
     list.push(stepDone);
     return list;
@@ -340,7 +340,7 @@ export function summaryBits(rec) {
   }
   /* цвет мочи — в конце: признак вспомогательный, и в узкой строке
      сводки он не должен вытеснять самочувствие и температуру */
-  if (rec.urine) out.push('цвет ' + rec.urine);
+  if (URINE_ON && rec.urine) out.push('цвет ' + rec.urine);
   return out;
 }
 

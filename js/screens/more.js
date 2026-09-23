@@ -14,7 +14,7 @@ import { loadDemo } from '../demo.js';
 import { applyTheme } from '../app.js';
 import { renderReports } from './reports.js';
 import { renderSafety } from './safety.js';
-import { DEFAULT_THRESHOLDS, analyte, refText, SCHEDULE, HOSP_CHECKLIST } from '../catalog.js';
+import { DEFAULT_THRESHOLDS, analyte, refText, SCHEDULE, HOSP_CHECKLIST, URINE_ON } from '../catalog.js';
 import { openA2HS, isStandalone } from './a2hs.js';
 import { openTour } from './tour.js';
 
@@ -840,8 +840,11 @@ function renderSettings(ctx) {
     petRow(st),
   ));
 
-  /* — Дневник: что спрашивать каждый день — */
-  S.appendChild(h('.section', null,
+  /* — Дневник: что спрашивать каждый день —
+     Весь раздел держится на одном переключателе про цвет мочи. Пока он
+     скрыт заглушкой, прятать нужно и настройку: иначе человек включает
+     вопрос, который ему нигде не зададут. */
+  if (URINE_ON) S.appendChild(h('.section', null,
     h('.section__head', null, h('.section__title', null, 'Ежедневный опрос')),
     h('.card.card--tight.row', null,
       h('.list__body', null,

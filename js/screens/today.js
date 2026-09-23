@@ -30,7 +30,7 @@ import {
 } from '../ui.js';
 import * as store from '../store.js';
 import { cycleRing, sparkline, lineChart } from '../charts.js';
-import { URINE, MOODS, TODAY_KEYS, analyte, fmtNum, evaluate, refText, refLabel } from '../catalog.js';
+import { URINE, URINE_ON, MOODS, TODAY_KEYS, analyte, fmtNum, evaluate, refText, refLabel } from '../catalog.js';
 import { petNode, petState, openPetPicker } from '../pets.js';
 import { openSos } from './sos.js';
 import { openA2HS, shouldOfferA2HS } from './a2hs.js';
@@ -60,7 +60,7 @@ export default function renderToday(ctx) {
   add(labsCard(ctx));
   add(agendaCard(c, ctx));
   add(medsCard(ctx));
-  add(urineRow(ctx));
+  if (URINE_ON) add(urineRow(ctx));
   add(sosBand(ctx));
   if (shouldOfferA2HS()) add(a2hsCard());
   add(h('p.disclaimer', null,
