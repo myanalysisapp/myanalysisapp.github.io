@@ -310,6 +310,10 @@ function draw() {
  * Полоса «вы смотрите демо». Висит на каждом экране, пока в дневнике
  * данные вымышленного пациента: иначе человек решит, что это его записи,
  * и не поймёт, откуда взялись чужие анализы.
+ *
+ * Только объясняет и ничего не предлагает. Начать свой дневник можно
+ * в настройках, «Очистить демо», — там это осознанный шаг с вопросом,
+ * а не кнопка, на которую жмут мимоходом и теряют показ.
  */
 function demoBar() {
   if (!store.state.profile || !store.state.profile.demo) return null;
@@ -318,18 +322,6 @@ function demoBar() {
     h('.demobar__t', null,
       h('b', null, 'Это демо. '),
       'Записи вымышленного пациента, чтобы было что посмотреть.'),
-    h('button.demobar__btn', {
-      type: 'button',
-      onclick: async () => {
-        await store.wipe();
-        await store.load();
-        /* Отметка переживает перезагрузку: иначе демо вернулось бы при
-           первом же обновлении страницы и стёрло бы этот выбор. */
-        await store.saveSettings({ ownDiary: true });
-        location.hash = '#/today';
-        renderApp();
-      },
-    }, 'Завести свой дневник'),
   );
 }
 
@@ -358,9 +350,7 @@ async function boot() {
      человек пришёл по ссылке посмотреть, что это такое, и анкета на
      входе отвечает не на его вопрос. Данные вымышленные, о чём прямо
      сказано полосой наверху, а рядом кнопка завести свой дневник. */
-  if (!store.state.profile.onboarded
-      && !store.state.labs.length
-      && !store.state.settings.ownDiary) {
+  if (!store.state.profile.onboarded && !store.state.labs.length) {
     try { await loadDemo(); } catch (e) { console.error(e); }
   }
 

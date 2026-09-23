@@ -454,17 +454,5 @@
 .demobar svg { width: 18px; height: 18px; flex: none; }
 .demobar__t { flex: 1; min-width: 0; }
 .demobar__t b { font-weight: var(--w-bold); }
-.demobar__btn {
-  flex: none; min-height: 36px; padding: 6px 14px;
-  border: 1px solid var(--accent); border-radius: var(--r-pill);
-  background: var(--surface); color: var(--accent-deep);
-  font-size: var(--t-sm); font-weight: var(--w-medium); cursor: pointer;
-  font-family: inherit;
-}
-.demobar__btn:hover { background: var(--accent); color: var(--ink-on-accent); }
 
-@media (max-width: 559px) {
-  .demobar { flex-wrap: wrap; }
-  .demobar__t { flex-basis: calc(100% - 30px); }
-  .demobar__btn { margin-left: auto; }
-}
+

@@ -67,7 +67,6 @@ export const DEFAULT_SETTINGS = {
   pet: 'cat',            // id из pets.js или 'none'
   urineDaily: true,      // спрашивать цвет мочи в ежедневном опросе
   tourSeen: false,       // короткую экскурсию показываем один раз
-  ownDiary: false,       // человек сам отказался от демо: больше не подсовываем
 };
 
 export const DEFAULT_SAFETY = {
