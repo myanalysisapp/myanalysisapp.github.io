@@ -251,6 +251,14 @@ function draw() {
   const prev = current;
   current = parseHash();
 
+  /* Где человек сейчас стоит. Экран перерисовывается не только при
+     переходе: любая запись — отметка приёма, отметка дня, галочка в
+     чек-листе — дёргает перерисовку. Раньше в таких случаях страница
+     уезжала наверх, и после нажатия на время приёма человек терял место
+     в списке. */
+  const yNow = window.scrollY;
+  const samePlace = !!prev && prev.tab === current.tab && prev.sub === current.sub;
+
   /* запоминаем позицию прокрутки по вкладкам */
   if (prev && prev.tab !== current.tab) {
     scrollMemory[prev.tab + '/' + (prev.sub || '')] = window.scrollY;
@@ -302,8 +310,15 @@ function draw() {
   onScroll();
 
   const key = current.tab + '/' + (current.sub || '');
-  const y = scrollMemory[key];
-  window.scrollTo(0, prev && prev.tab === current.tab && prev.sub !== current.sub ? 0 : (y || 0));
+  if (samePlace) {
+    /* остались на том же экране — остаёмся и на том же месте */
+    window.scrollTo(0, yNow);
+  } else if (prev && prev.tab === current.tab && prev.sub !== current.sub) {
+    /* вошли в подраздел или вышли из него — начинаем сверху */
+    window.scrollTo(0, 0);
+  } else {
+    window.scrollTo(0, scrollMemory[key] || 0);
+  }
 }
 
 /**
