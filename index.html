@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <title>Мой Анализ — дневник здоровья</title>
+
+  <!-- viewport-fit=cover: раскладка уходит под «чёлку» и домашний индикатор iPhone,
+       а отступы задаются через env(safe-area-inset-*) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+  <meta name="description" content="Дневник здоровья для пациентов с хроническими гематологическими заболеваниями. Данные хранятся только на вашем устройстве.">
+  <meta name="theme-color" content="#F1ECE3">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Мой Анализ">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="icon" href="assets/icon-192.png" sizes="192x192">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+
+  <!-- Шрифт лежит внутри проекта. Предзагрузка — чтобы первая отрисовка
+       сразу шла в Nunito, без подмены системным на долю секунды -->
+  <link rel="preload" href="assets/fonts/nunito-var.woff" as="font" type="font/woff" crossorigin>
+
+  <!-- Никаких внешних доменов: ни шрифтов, ни CDN, ни аналитики -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/desktop.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+
+  <script>
+    /* Тема применяется до первой отрисовки, чтобы не было вспышки светлого фона. */
+    (function () {
+      try {
+        var t = localStorage.getItem('ma-theme');
+        if (t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', '#12100C');
+        }
+      } catch (e) { /* приватный режим — не страшно */ }
+    })();
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div class="screen" id="boot" style="display:grid;place-items:center;min-height:70dvh">
+      <div style="text-align:center;color:var(--ink-3);max-width:32rem;padding:0 8px">
+        <svg width="56" height="56" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#13675A" opacity=".12"/>
+          <path d="M32 14c0 0 12.5 13.8 12.5 21.8A12.5 12.5 0 1 1 19.5 35.8C19.5 27.8 32 14 32 14z"
+                fill="none" stroke="#13675A" stroke-width="2.6" opacity=".55"/>
+        </svg>
+        <p id="boot-msg" style="margin-top:12px;font-size:15px">Загружаем ваш дневник…</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Приложение собрано из ES-модулей, а браузеры не грузят их по file:// —
+       запрет CORS. Открытый напрямую index.html висел бы на заставке,
+       поэтому объясняем это сразу, а не молчим. */
+    (function () {
+      var boot = document.getElementById('boot');
+      var msg = document.getElementById('boot-msg');
+      if (!boot || !msg) return;
+
+      function explain(title, steps) {
+        msg.innerHTML = '';
+        var h = document.createElement('p');
+        h.style.cssText = 'font-size:19px;font-weight:650;color:#1B1F1E;margin:0 0 10px';
+        h.textContent = title;
+        var t = document.createElement('p');
+        t.style.cssText = 'font-size:15px;line-height:1.5;margin:0 0 14px';
+        t.textContent = steps;
+        var pre = document.createElement('div');
+        pre.style.cssText = 'font:14px ui-monospace,SFMono-Regular,Consolas,monospace;' +
+          'background:#F2EDE5;border:1px solid #E8E1D6;border-radius:12px;' +
+          'padding:12px 14px;color:#1B1F1E;text-align:left;white-space:pre-line';
+        pre.textContent = 'python serve.py\n\nзатем откройте  http://localhost:5173';
+        msg.appendChild(h); msg.appendChild(t); msg.appendChild(pre);
+      }
+
+      if (location.protocol === 'file:') {
+        explain(
+          'Откройте через локальный сервер',
+          'Приложение собрано из ES-модулей, а по file:// браузер их не загружает. ' +
+          'Запустите в папке проекта одну команду — и откройте адрес в браузере. ' +
+          'С Node.js то же самое делает npm run dev.'
+        );
+        return;
+      }
+
+      /* страховка на случай другой ошибки запуска */
+      setTimeout(function () {
+        if (window.__maBooted) return;
+        explain(
+          'Не удалось запустить приложение',
+          'Скрипты не загрузились. Проверьте, что страница открыта с локального сервера, ' +
+          'и посмотрите консоль браузера (F12) — там будет причина.'
+        );
+      }, 6000);
+    })();
+  </script>
+
+  <noscript>
+    <div style="padding:32px;text-align:center;font:16px system-ui">
+      Для работы приложения нужен JavaScript. Включите его в настройках браузера.
+    </div>
+  </noscript>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

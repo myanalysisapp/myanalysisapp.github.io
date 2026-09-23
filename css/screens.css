@@ -1,0 +1,1774 @@
+/* ==========================================================================
+   Экранные блоки: кольцо цикла, самочувствие, шкала мочи, показатели,
+   графики, анализы, отчёты, онбординг
+   ========================================================================== */
+
+/* — Приветствие пользователя —————————————————————— */
+
+.hello { padding: var(--sp-4) 2px var(--sp-1); }
+.hello__greet {
+  font-size: var(--t-lg); font-weight: var(--w-semi);
+  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+}
+.hello__date { font-size: var(--t-sm); color: var(--ink-3); margin-top: 2px; }
+
+/* ==========================================================================
+   Кольцо интервала между инфузиями — визитная карточка приложения
+   ========================================================================== */
+
+/* Размер задаётся лесенкой: здесь основа, дальше по файлу телефон,
+   в desktop.css — широкий экран. В одном месте на ширину, не в двух. */
+.ring-wrap {
+  position: relative;
+  width: 148px; height: 148px;
+  margin: 0 auto;
+}
+
+.ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.ring-track { fill: none; stroke: var(--surface-alt); stroke-width: 15; }
+/* stroke задаётся атрибутом на самом элементе: id градиента уникален
+   для каждого кольца, а правило в CSS перебило бы его и дуга исчезла */
+.ring-prog {
+  fill: none; stroke-width: 15; stroke-linecap: round;
+  transition: stroke-dashoffset 1.1s var(--ease-out);
+  filter: drop-shadow(0 3px 8px rgba(43, 91, 215, .26));
+}
+.ring-tick { stroke: var(--line); stroke-width: 2; stroke-linecap: round; }
+.ring-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 3.5; }
+
+.ring-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1px; text-align: center; padding: 0 14px;
+}
+.ring-day {
+  font-family: var(--font-num);
+  font-size: var(--t-3xl); font-weight: var(--w-bold); line-height: 1;
+  letter-spacing: -.045em; font-variant-numeric: tabular-nums;
+}
+.ring-of { font-size: var(--t-sm); color: var(--ink-3); font-weight: 520; }
+.ring-left {
+  display: block; width: max-content; max-width: 100%;
+  margin: var(--sp-3) auto 0;
+  font-size: var(--t-sm); font-weight: 620; white-space: nowrap;
+  color: var(--accent-deep); background: var(--accent-soft);
+  padding: 5px 14px; border-radius: var(--r-pill);
+}
+.ring-left--due { color: #fff; background: linear-gradient(140deg, var(--accent-bright), var(--accent-deep)); }
+.ring-left--over { color: var(--warn); background: var(--warn-soft); }
+
+.ring-next {
+  font-size: var(--t-sm); color: var(--ink-2); text-align: center;
+}
+.ring-next b { color: var(--ink); font-weight: 620; }
+
+/* ==========================================================================
+   Самочувствие
+   ========================================================================== */
+
+.mood-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--sp-2); }
+.mood {
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 11px 2px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transition: all var(--dur-1) var(--ease);
+}
+.mood__face { font-size: 26px; line-height: 1; filter: grayscale(.35); transition: all var(--dur-2) var(--ease-out); }
+.mood__lbl { font-size: 11px; color: var(--ink-3); font-weight: 520; }
+.mood:active { transform: scale(.94); }
+.mood[aria-pressed="true"] {
+  border-color: var(--accent-line); background: var(--accent-soft);
+}
+.mood[aria-pressed="true"] .mood__face { filter: none; transform: scale(1.22); }
+.mood[aria-pressed="true"] .mood__lbl { color: var(--accent-deep); font-weight: 620; }
+
+/* — Шкала цвета мочи ————————————————————————————— */
+
+.urine-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.urine {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px rgba(22, 32, 58, .1);
+  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-1) var(--ease);
+  padding: 0;
+}
+.urine:active { transform: scale(.92); }
+.urine[aria-pressed="true"] {
+  border-color: var(--ink);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: inset 0 0 0 1px rgba(22, 32, 58, .1), var(--sh-2);
+}
+.urine__n {
+  position: absolute; left: 0; right: 0; bottom: 5px;
+  font-size: 11px; font-weight: 700; color: rgba(40, 28, 12, .5);
+}
+.urine--dark .urine__n { color: rgba(255, 255, 255, .72); }
+.urine-legend {
+  display: flex; justify-content: space-between;
+  font-size: var(--t-xs); color: var(--ink-3); margin-top: 7px;
+}
+
+/* — Температура ————————————————————————————————— */
+
+.temp-val {
+  font-family: var(--font-num); font-size: var(--t-3xl); font-weight: 700;
+  letter-spacing: -.04em; font-variant-numeric: tabular-nums; line-height: 1;
+}
+.temp-val small { font-size: var(--t-md); font-weight: 550; color: var(--ink-3); margin-left: 3px; letter-spacing: 0; }
+
+/* — Ползунки вечернего опроса ——————————————————— */
+
+.slider-row { display: flex; flex-direction: column; gap: 3px; }
+.slider-head { display: flex; align-items: baseline; gap: var(--sp-2); font-size: var(--t-sm); }
+.slider-head b { margin-left: auto; font-weight: 620; color: var(--ink); }
+
+/* ==========================================================================
+   Мини-карточки показателей
+   ========================================================================== */
+
+/* На телефоне два в ряд, дальше все четыре: вчетвером в 375px
+   плитки схлопывались до неразборчивых столбиков. */
+.metric-row {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-2);
+}
+@media (min-width: 560px) {
+  .metric-row { grid-template-columns: repeat(4, 1fr); }
+}
+.metric {
+  border: 1px solid var(--line-soft); border-radius: var(--r-md);
+  background: var(--surface); padding: 12px 12px 10px;
+  text-align: left; position: relative; overflow: hidden;
+  transition: transform var(--dur-1) var(--ease);
+}
+.metric:active { transform: scale(.975); }
+
+/* Плитка выбрана — под ней показан её график. Обводка внутрь, чтобы
+   выбранная плитка не подпрыгивала относительно соседних. */
+.metric.is-sel { border-color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.metric--warn.is-sel { border-color: var(--warn); box-shadow: inset 0 0 0 1.5px var(--warn); }
+.metric--alert.is-sel { border-color: var(--alert); box-shadow: inset 0 0 0 1.5px var(--alert); }
+.metric--blank { background: var(--surface-2); border-style: dashed; }
+.metric--blank .metric__v { color: var(--ink-3); }
+/* Полное название целиком: «Hb» знает не каждый, а «Гемоглобин»
+   не нуждается в расшифровке. */
+.metric__k {
+  font-size: var(--t-sm); color: var(--ink); font-weight: var(--w-medium);
+  letter-spacing: 0; line-height: 1.2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.metric__v {
+  font-family: var(--font-num); font-size: var(--t-xl); font-weight: var(--w-bold);
+  letter-spacing: -.035em; font-variant-numeric: tabular-nums; line-height: 1.15;
+  margin-top: 3px; display: flex; align-items: baseline; gap: 3px;
+  white-space: nowrap;
+}
+.metric__u {
+  font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--ink-2);
+  letter-spacing: 0; white-space: nowrap;
+  overflow: hidden; text-overflow: clip; min-width: 0;
+}
+.metric__spark { height: 22px; margin-top: 4px; display: block; width: 100%; overflow: visible; }
+
+/* Три плитки в ряд на телефоне: числу нужно уступить место единицам,
+   иначе «Ед/л» и «×10⁹/л» срезаются на полуслове. */
+@media (max-width: 440px) {
+  .metric { padding: 10px 9px 9px; }
+  .metric__v { font-size: var(--t-lg); letter-spacing: -.03em; }
+  .metric__trend { top: 8px; right: 8px; }
+}
+/* Норма и дата — два самостоятельных куска: перенос идёт между ними,
+   а не внутри «9 дней назад». */
+.metric__d {
+  font-size: var(--t-xs); color: var(--ink-3); margin-top: 3px;
+  display: flex; flex-wrap: wrap; gap: 0 9px;
+}
+.metric__d > span { white-space: nowrap; }
+.metric__trend { position: absolute; top: 10px; right: 10px; width: 15px; height: 15px; line-height: 0; }
+.metric__trend svg { width: 15px; height: 15px; }
+
+.metric--warn  { border-color: var(--warn-line);  background: var(--warn-soft); }
+.metric--warn .metric__v { color: var(--warn); }
+.metric--alert { border-color: var(--alert-line); background: var(--alert-soft); }
+.metric--alert .metric__v { color: var(--alert); }
+
+/* — Флаги значений в формах и таблицах ——————————— */
+
+.flag { font-size: var(--t-xs); font-weight: 600; }
+.flag--warn  { color: var(--warn); }
+.flag--alert { color: var(--alert); }
+.flag--ok    { color: var(--ink-3); font-weight: 520; }
+
+/* ==========================================================================
+   Задачи «Что сегодня»
+   ========================================================================== */
+
+.task {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid var(--line-soft); border-radius: var(--r-md);
+  background: var(--surface);
+  transition: background var(--dur-2) var(--ease), opacity var(--dur-2) var(--ease);
+}
+.task.is-done { opacity: .56; background: var(--surface-2); }
+.task.is-done .task__t { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.task__ico {
+  flex: none; width: 36px; height: 36px; border-radius: 11px;
+  display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent-deep);
+}
+.task__ico svg { width: 19px; height: 19px; }
+.task__ico--warm { background: var(--warn-soft); color: var(--warn); }
+.task__ico--info { background: var(--info-soft); color: var(--info); }
+.task__body { flex: 1; min-width: 0; padding-top: 1px; }
+.task__t { font-size: var(--t-base); font-weight: 560; line-height: 1.32; }
+.task__s { font-size: var(--t-sm); color: var(--ink-3); margin-top: 2px; line-height: 1.4; }
+.task__btn {
+  flex: none; align-self: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--line-strong); background: var(--surface);
+  display: grid; place-items: center; color: transparent;
+  transition: all var(--dur-2) var(--ease-out);
+}
+.task__btn svg { width: 18px; height: 18px; }
+.task__btn:active { transform: scale(.88); }
+.task.is-done .task__btn {
+  border-color: var(--accent); background: var(--accent); color: #fff;
+}
+
+/* ==========================================================================
+   Быстрая запись — сетка иконок
+   ========================================================================== */
+
+.qa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.qa {
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  padding: var(--sp-4) 6px;
+  border: 1px solid var(--line-soft); border-radius: var(--r-lg);
+  background: var(--surface-2);
+  transition: transform var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+  animation: card-in var(--dur-3) var(--ease-out) both;
+}
+.qa:active { transform: scale(.95); background: var(--surface-alt); }
+.qa__ico {
+  width: 46px; height: 46px; border-radius: 15px;
+  display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent-deep);
+}
+.qa__ico svg { width: 24px; height: 24px; }
+.qa__t { font-size: var(--t-xs); font-weight: 560; text-align: center; line-height: 1.25; color: var(--ink); }
+
+/* ==========================================================================
+   Анализы
+   ========================================================================== */
+
+.lab-item { display: flex; flex-direction: column; gap: 7px; align-items: stretch; padding: var(--sp-4) var(--sp-5); }
+.lab-item__top { display: flex; align-items: center; gap: var(--sp-2); }
+.lab-item__top > svg.ico { width: 20px; height: 20px; color: var(--ink-3); }
+.lab-item__date { font-size: var(--t-base); font-weight: 620; }
+.lab-item__vals { display: flex; flex-wrap: wrap; gap: 5px 14px; }
+.lab-val { font-size: var(--t-sm); color: var(--ink-2); }
+.lab-val b { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 620; }
+.lab-val.is-warn b  { color: var(--warn); }
+.lab-val.is-alert b { color: var(--alert); }
+
+.month-head {
+  font-size: var(--t-sm); font-weight: 650; color: var(--ink-3);
+  padding: var(--sp-5) 2px var(--sp-2); text-transform: capitalize;
+}
+
+/* — Строка ввода показателя ——————————————————————— */
+
+.an-row {
+  display: grid; grid-template-columns: 1fr 118px;
+  gap: var(--sp-3); align-items: center;
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.an-row:last-child { border-bottom: none; }
+.an-row__name { font-size: var(--t-base); font-weight: 550; line-height: 1.25; }
+.an-row__ref { font-size: var(--t-xs); color: var(--ink-3); margin-top: 2px; }
+.an-row__in { position: relative; }
+.an-row__unit {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--ink-3); pointer-events: none;
+}
+.an-row.is-warn .input--num  { border-color: var(--warn-line);  background: var(--warn-soft); color: var(--warn); }
+.an-row.is-alert .input--num { border-color: var(--alert-line); background: var(--alert-soft); color: var(--alert); }
+.an-row.is-unsure .input--num {
+  border-color: var(--info); background: var(--info-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--info) 14%, transparent);
+}
+
+/* — Переключатель единиц —————————————————————————
+   Стоит прямо в поле: единица и значение всегда рядом, и видно,
+   что её можно сменить.                                            */
+
+.an-row__in { display: flex; flex-direction: column; gap: 4px; }
+
+.unit-pick, .unit-static {
+  align-self: flex-end;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink-3);
+  background: none;
+  border: none;
+  padding: 2px 0 0;
+  white-space: nowrap;
+}
+.unit-pick {
+  border-bottom: 1px dashed var(--line-strong);
+  color: var(--accent);
+  font-weight: 600;
+  transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.unit-pick:hover { border-color: var(--accent); }
+.unit-pick.is-flash { animation: unit-flash .5s var(--ease-out); }
+
+@keyframes unit-flash {
+  0%   { color: var(--accent-bright); transform: translateY(-2px) scale(1.08); }
+  100% { color: var(--accent); transform: none; }
+}
+
+.an-row__ref { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.an-row__swap { color: var(--accent); opacity: .75; font-size: 10px; }
+
+/* — Разбор вставленного текста ——————————————————— */
+
+.paste-area {
+  min-height: 132px;
+  font-family: var(--font-num);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.paste-preview { min-height: 74px; }
+
+.paste-hint {
+  font-size: var(--t-sm); color: var(--ink-3); line-height: 1.5;
+  padding: var(--sp-4); text-align: center;
+  border: 1px dashed var(--line); border-radius: var(--r-md);
+}
+
+.paste-stat {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  animation: card-in var(--dur-2) var(--ease-out) both;
+}
+.paste-stat__n {
+  font-size: var(--t-2xl); font-weight: 700; letter-spacing: -.04em;
+  color: var(--accent-deep); line-height: 1; min-width: 1.2em; text-align: center;
+}
+.paste-stat__t { font-size: var(--t-base); font-weight: 600; color: var(--accent-deep); }
+.paste-stat__s { font-size: var(--t-xs); color: var(--ink-2); margin-top: 2px; }
+
+/* чип показателя, где разбор не уверен */
+.chip--check {
+  border-color: var(--info); background: var(--info-soft); color: var(--info);
+  font-weight: 600;
+}
+.paste-preview .chip { animation: card-in var(--dur-2) var(--ease-out) both; }
+
+.demo-ribbon--ok { background: var(--accent-soft); color: var(--accent-deep); }
+
+/* — Демо-распознавание ——————————————————————————— */
+
+.scan {
+  position: relative; width: 100%; aspect-ratio: 3 / 4; max-height: 44dvh;
+  border-radius: var(--r-lg); overflow: hidden;
+  background: var(--surface-alt);
+  display: grid; place-items: center;
+}
+.scan__doc { width: 78%; height: 86%; border-radius: 8px; background: #fff; box-shadow: var(--sh-2); padding: 14px 16px; }
+.scan__line-fake { height: 6px; border-radius: 3px; background: var(--line); margin-bottom: 9px; }
+.scan__beam {
+  position: absolute; left: 0; right: 0; height: 130px;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent-bright) 26%, transparent), transparent);
+  animation: scan-beam 1.15s var(--ease) infinite;
+}
+.scan__edge {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: var(--accent-bright);
+  box-shadow: 0 0 14px 2px color-mix(in srgb, var(--accent-bright) 70%, transparent);
+  animation: scan-edge 1.15s var(--ease) infinite;
+}
+@keyframes scan-beam { 0% { top: -130px } 100% { top: 100% } }
+@keyframes scan-edge { 0% { top: 0 } 100% { top: calc(100% - 2px) } }
+
+.scan__corner { position: absolute; width: 26px; height: 26px; border: 3px solid var(--accent-bright); }
+.scan__corner--tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; border-radius: 8px 0 0 0; }
+.scan__corner--tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; border-radius: 0 8px 0 0; }
+.scan__corner--bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; border-radius: 0 0 0 8px; }
+.scan__corner--br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; border-radius: 0 0 8px 0; }
+
+.demo-ribbon {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--info-soft); color: var(--info);
+  border-radius: var(--r-pill); padding: 5px 12px;
+  font-size: var(--t-xs); font-weight: 620;
+}
+
+/* ==========================================================================
+   Динамика (графики)
+   ========================================================================== */
+
+.chart-card { padding: var(--sp-4) var(--sp-3) var(--sp-3); }
+.chart-head {
+  display: flex; align-items: baseline; gap: var(--sp-2);
+  padding: 0 var(--sp-2) var(--sp-2);
+}
+.chart-name { font-size: var(--t-base); font-weight: 620; }
+.chart-unit { font-size: var(--t-xs); color: var(--ink-3); }
+.chart-last {
+  margin-left: auto; font-family: var(--font-num); font-variant-numeric: tabular-nums;
+  font-size: var(--t-md); font-weight: 700; letter-spacing: -.02em;
+}
+.chart-svg { width: 100%; display: block; overflow: visible; touch-action: pan-y; }
+.chart-foot { display: flex; gap: var(--sp-3); align-items: baseline;
+  margin-top: 6px; padding: 0 8px; font-size: var(--t-xs); color: var(--ink-3); }
+.chart-foot { flex-wrap: wrap; }
+.chart-foot span { min-width: 0; }
+.chart-foot span:last-child { margin-left: auto; }
+@media (max-width: 560px) {
+  /* «Референс 130–160 г/л» важнее многоточия: пусть переносится */
+  .chart-foot { flex-direction: column; gap: 2px; }
+  .chart-foot span:last-child { margin-left: 0; }
+}
+
+.c-band  { fill: var(--accent-soft); opacity: .75; }
+.c-grid  { stroke: var(--line-soft); stroke-width: 1; }
+/* 16px и здесь: раньше подписи были 10px, а читает их тот же человек,
+   что и остальной текст. */
+.c-axis  { fill: var(--ink-2); font-size: var(--t-sm); font-family: var(--font-num); }
+.c-line  { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.c-area  { /* fill приходит атрибутом: id градиента свой у каждого графика */ }
+.c-dot   { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.c-dot--warn  { stroke: var(--warn); }
+.c-dot--alert { fill: var(--alert); stroke: var(--alert); }
+.c-inf   { stroke: var(--accent-bright); stroke-width: 1.4; stroke-dasharray: 3 3; opacity: .55; }
+.c-draw  { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw 1.05s var(--ease-out) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0 } }
+
+.c-cursor { stroke: var(--ink-3); stroke-width: 1; opacity: .5; }
+
+.chart-tip {
+  position: absolute; z-index: 5;
+  background: var(--ink); color: var(--bg);
+  border-radius: 12px; padding: 8px 12px;
+  font-size: var(--t-xs); line-height: 1.4; font-weight: 520;
+  box-shadow: var(--sh-3); pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+  animation: fade-in .12s var(--ease) both;
+}
+.chart-tip b { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* — Лента событий под графиками ————————————————— */
+
+.evt-rail { position: relative; padding: var(--sp-2) 0 var(--sp-1); }
+.evt-line { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
+.evt-dot {
+  position: absolute; transform: translate(-50%, -50%); top: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface);
+  display: grid; place-items: center; font-size: 13px;
+  box-shadow: var(--sh-1);
+  transition: transform var(--dur-1) var(--ease);
+  padding: 0;
+}
+.evt-dot:active { transform: translate(-50%, -50%) scale(1.22); }
+.evt-dot__n {
+  position: absolute; right: -5px; top: -5px;
+  min-width: 16px; height: 16px; padding: 0 3px;
+  border-radius: 99px; background: var(--ink); color: var(--bg);
+  font-size: 10px; font-weight: 700; line-height: 16px;
+}
+.evt-dot--warn { border-color: var(--warn-line); background: var(--warn-soft); }
+.evt-dot--alert { border-color: var(--alert-line); background: var(--alert-soft); }
+
+/* ==========================================================================
+   Лекарства
+   ========================================================================== */
+
+.med { padding: var(--sp-4) var(--sp-5); }
+.med__top { display: flex; align-items: flex-start; gap: var(--sp-3); }
+.med__name { font-size: var(--t-md); font-weight: 650; letter-spacing: -.01em; }
+.med__dose { font-family: var(--font-num); font-size: var(--t-sm); color: var(--ink-2); margin-top: 2px; }
+.med__note {
+  font-size: var(--t-sm); color: var(--ink-2); margin-top: 8px; line-height: 1.42;
+  padding: 9px 12px; border-radius: var(--r-sm); background: var(--surface-alt);
+}
+.med__acts { display: flex; gap: var(--sp-2); margin-top: var(--sp-3); flex-wrap: wrap; }
+
+.hist {
+  position: relative;
+  padding-left: 26px;
+}
+.hist::before {
+  content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--line);
+}
+.hist__item { position: relative; padding: var(--sp-3) 0; }
+.hist__item::before {
+  content: ""; position: absolute; left: -23px; top: 20px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--accent);
+}
+.hist__d { font-size: var(--t-xs); color: var(--ink-3); font-weight: 600; }
+.hist__c { font-size: var(--t-base); margin-top: 3px; }
+.hist__c s { color: var(--ink-3); text-decoration-color: var(--ink-3); }
+.hist__c b { font-weight: 650; }
+.hist__r { font-size: var(--t-sm); color: var(--ink-2); margin-top: 2px; }
+
+/* — Календарь инфузий —————————————————————————— */
+
+.inf-cal { display: flex; flex-direction: column; }
+.inf-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: 1px solid var(--line-soft);
+}
+.inf-item:last-child { border-bottom: none; }
+.inf-item > svg.ico { width: 20px; height: 20px; color: var(--ink-3); flex: none; }
+.inf-mark svg { width: 17px; height: 17px; }
+.inf-item--future { opacity: .72; }
+.inf-mark {
+  flex: none; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent-deep);
+  font-family: var(--font-num); font-size: var(--t-xs); font-weight: 700;
+}
+.inf-mark--done { background: var(--accent); color: #fff; }
+.inf-mark--next { background: var(--surface); border: 2px dashed var(--accent-line); color: var(--accent); }
+.inf-d { font-size: var(--t-base); font-weight: 550; }
+.inf-s { font-size: var(--t-sm); color: var(--ink-3); }
+
+/* ==========================================================================
+   Чек-лист госпитализации
+   ========================================================================== */
+
+.chk { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--line-soft); }
+.chk:last-child { border-bottom: none; }
+.chk__st {
+  flex: none; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--ink-3);
+}
+.chk__st--ok { background: var(--accent); }
+.chk__st--soon { background: var(--warn); }
+.chk__st--bad { background: var(--alert); }
+.chk__st--none { background: var(--line-strong); }
+.chk > svg.ico { width: 20px; height: 20px; color: var(--ink-3); flex: none; }
+
+/* ==========================================================================
+   Карточка безопасности
+   ========================================================================== */
+
+.safety {
+  border-radius: var(--r-xl);
+  background: linear-gradient(158deg, #17342F, #0C1F1C);
+  color: #F0EFE9;
+  padding: var(--sp-6) var(--sp-5);
+  box-shadow: var(--sh-3);
+}
+.safety__h { font-size: var(--t-xs); letter-spacing: .13em; text-transform: uppercase; opacity: .62; font-weight: 650; }
+.safety__name { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.02em; margin-top: 3px; }
+.safety__dx { font-size: var(--t-base); opacity: .86; margin-top: 3px; }
+.safety__sec { margin-top: var(--sp-5); }
+.safety__lbl { font-size: var(--t-xs); letter-spacing: .09em; text-transform: uppercase; opacity: .55; font-weight: 650; margin-bottom: 5px; }
+.safety__v { font-size: var(--t-sm); line-height: 1.5; }
+.safety__warn {
+  margin-top: var(--sp-5); padding: 12px 14px; border-radius: var(--r-md);
+  background: rgba(220, 150, 80, .16); border: 1px solid rgba(220, 150, 80, .32);
+  font-size: var(--t-sm); line-height: 1.45;
+}
+.safety__qr {
+  margin-top: var(--sp-5); display: flex; justify-content: center;
+}
+.safety__qr img, .safety__qr svg {
+  width: 148px; height: 148px; background: #fff; padding: 9px; border-radius: 12px;
+}
+
+/* ==========================================================================
+   Онбординг
+   ========================================================================== */
+
+.ob {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top) + var(--sp-5)) var(--sp-5)
+           calc(env(safe-area-inset-bottom) + var(--sp-5));
+}
+.ob__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: min(100%, 640px);
+}
+.ob__side { display: flex; flex: 1; min-height: 180px; }
+.ob__body { display: flex; flex-direction: column; }
+
+.ob__brand {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: var(--sp-4);
+}
+.ob__brand-name { font-size: var(--t-md); font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.ob__brand-sub { font-size: var(--t-xs); color: var(--ink-3); }
+
+.ob__art {
+  flex: 1; display: grid; place-items: center;
+  animation: card-in var(--dur-3) var(--ease-out) both;
+}
+.ob__art svg { width: min(280px, 68vw); height: auto; }
+
+.ob__t {
+  font-size: var(--t-2xl); font-weight: 700; letter-spacing: -.03em;
+  line-height: 1.16; text-align: center;
+  animation: card-in var(--dur-3) var(--ease-out) both .08s;
+}
+.ob__s {
+  font-size: var(--t-base); color: var(--ink-2); text-align: center;
+  line-height: 1.5; margin-top: var(--sp-3); max-width: 34ch; align-self: center;
+  animation: card-in var(--dur-3) var(--ease-out) both .14s;
+}
+.ob__form { margin-top: var(--sp-6); text-align: left; width: 100%; }
+
+.ob__dots { display: flex; justify-content: center; gap: 7px; margin: var(--sp-6) 0 var(--sp-5); }
+.ob__dot { width: 7px; height: 7px; border-radius: 99px; background: var(--line-strong); transition: all var(--dur-2) var(--ease); }
+.ob__dot.is-on { width: 21px; background: var(--accent); }
+
+.ob__acts { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: auto; padding-top: var(--sp-5); }
+
+.logo-hero {
+  width: 96px; height: 96px; border-radius: 26px;
+  box-shadow: var(--sh-3); display: block; margin: 0 auto;
+}
+
+/* — Подсказка «На экран Домой» —————————————————— */
+
+.a2hs-step { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) 0; }
+.a2hs-n {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent-deep);
+  display: grid; place-items: center;
+  font-size: var(--t-xs); font-weight: 700;
+}
+.a2hs-ico {
+  flex: none; width: 34px; height: 34px; border-radius: 9px;
+  background: var(--surface-alt); display: grid; place-items: center; color: var(--info);
+}
+.a2hs-ico svg { width: 19px; height: 19px; }
+
+/* ==========================================================================
+   Режим «Мне плохо»
+   ========================================================================== */
+
+.sos { background: var(--surface); }
+.sos__t { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.025em; }
+.sos__temp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.sos__temp {
+  padding: var(--sp-5) 4px; border-radius: var(--r-lg);
+  border: 1px solid var(--line); background: var(--surface);
+  font-family: var(--font-num); font-size: var(--t-xl); font-weight: 700;
+  letter-spacing: -.03em; transition: all var(--dur-1) var(--ease);
+}
+.sos__temp:active { transform: scale(.94); }
+.sos__temp[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn-line); color: var(--warn); }
+.sos__sym { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+.sos__sym .chip { justify-content: center; padding: 15px 10px; font-size: var(--t-base); }
+
+.log-line {
+  display: flex; align-items: baseline; gap: var(--sp-3);
+  padding: 10px 0; border-bottom: 1px solid var(--line-soft);
+  font-size: var(--t-sm);
+}
+.log-line:last-child { border-bottom: none; }
+.log-line time { font-family: var(--font-num); color: var(--ink-3); flex: none; width: 48px; }
+.log-line b { font-family: var(--font-num); font-size: var(--t-base); }
+
+/* ==========================================================================
+   Отчёты — предпросмотр
+   ========================================================================== */
+
+.report-paper {
+  background: #fff; color: #17191A;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  padding: var(--sp-5) var(--sp-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+:root[data-theme="dark"] .report-paper { color: #17191A; }
+
+.rep-h1 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.rep-h2 { font-size: 13px; font-weight: 700; margin: 14px 0 6px; }
+.rep-meta { font-size: 11px; color: #5A625E; margin-top: 3px; }
+
+.rep-table { border-collapse: collapse; width: 100%; font-size: 11px; margin-top: 10px; }
+.rep-table th, .rep-table td {
+  border: 1px solid #D7D2CA; padding: 4px 5px; text-align: center;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.rep-table th { background: #F2EFE9; font-weight: 700; font-size: 10px; line-height: 1.25; }
+.rep-table th small { display: block; font-weight: 400; color: #6A716D; font-size: 9px; }
+.rep-table td:first-child, .rep-table th:first-child { text-align: left; }
+
+/* Лист с датами по столбцам: первая колонка держится на месте, пока
+   остальные едут вбок. */
+.rep-scroll { overflow-x: auto; scrollbar-width: thin; }
+.rep-table--wide { width: auto; min-width: 100%; }
+.rep-table__k {
+  position: sticky; left: 0; z-index: 1;
+  background: #F2EFE9; text-align: left; min-width: 116px;
+}
+.rep-table .lo { color: #A8452F; font-weight: 700; }
+.rep-table .hi { color: #A8452F; font-weight: 700; }
+.rep-foot { font-size: 10px; color: #6A716D; margin-top: 12px; line-height: 1.45; }
+
+/* ==========================================================================
+   Десктоп
+   ========================================================================== */
+
+/* Раскладка для планшета и компьютера вынесена в css/desktop.css */
+
+/* ==========================================================================
+   Календарь-тепловая карта
+   ========================================================================== */
+
+.cal-nav {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 0 2px;
+}
+.cal-nav__title {
+  flex: 1; text-align: center;
+  font-size: var(--t-md); font-weight: 650; letter-spacing: -.01em;
+}
+.cal-nav__btn {
+  width: 44px; height: 44px; flex: none;
+  display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink-2);
+  transition: background var(--dur-1) var(--ease), opacity var(--dur-1) var(--ease);
+}
+.cal-nav__btn svg { width: 18px; height: 18px; }
+.cal-nav__btn:active { background: var(--surface-alt); }
+.cal-nav__btn:disabled { opacity: .35; pointer-events: none; }
+
+.cal-card { padding: var(--sp-4); }
+.cal-card__title {
+  font-size: var(--t-sm); font-weight: 650; color: var(--ink-3);
+  text-align: center; margin-bottom: var(--sp-3);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.cal-grid--head { gap: 5px; margin-bottom: 5px; }
+.cal-wd {
+  text-align: center; font-size: var(--t-sm); font-weight: var(--w-semi);
+  color: var(--ink-2); padding-bottom: 4px;
+}
+
+.cal-day {
+  position: relative;
+  aspect-ratio: 1; min-width: 44px; min-height: 44px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: var(--surface-2);
+  padding: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-num);
+  font-size: var(--t-sm); font-weight: var(--w-semi);
+  color: var(--ink-2);
+  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+  animation: cal-pop var(--dur-3) var(--ease-out) both;
+}
+@keyframes cal-pop {
+  from { opacity: 0; transform: scale(.72); }
+  to   { opacity: 1; transform: none; }
+}
+
+.cal-day.is-filled { border-color: transparent; color: rgba(40, 28, 12, .62); }
+.cal-day.is-dark { color: rgba(255, 255, 255, .88); }
+.cal-day--empty { border: none; background: none; animation: none; pointer-events: none; }
+.cal-day--future { opacity: .3; pointer-events: none; }
+
+.cal-day:hover { transform: translateY(-2px); box-shadow: var(--sh-2); z-index: 1; }
+.cal-day:active { transform: scale(.92); }
+
+.cal-day.is-today {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.cal-day__n { line-height: 1; }
+
+/* инфузия — точка снизу, анализы — уголок сверху */
+.cal-day__inf {
+  position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 1.5px var(--surface);
+}
+.cal-day__lab {
+  position: absolute; top: 3px; right: 3px;
+  width: 5px; height: 5px; border-radius: 50%;
+  border: 1.5px solid var(--info);
+}
+
+.cal-legend { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); }
+.cal-legend__item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--t-xs); color: var(--ink-2);
+}
+.cal-legend__sw {
+  width: 16px; height: 16px; border-radius: 5px; flex: none;
+  box-shadow: inset 0 0 0 1px rgba(22, 32, 58, .12);
+}
+
+
+/* ==========================================================================
+   Отметка за день — пошаговый опрос
+
+   Цели крупные (минимум 56px по высоте), вопрос набран крупно, на экране
+   единственное яркое пятно. Закон Фиттса: кнопки широкие и у нижнего края,
+   куда дотягивается большой палец.
+   ========================================================================== */
+
+/* Высота листа фиксирована: иначе панель прыгала бы на каждом шаге —
+   у вопросов разное количество вариантов. Стабильная рамка успокаивает. */
+.sheet--checkin { height: min(88dvh, 760px); }
+.sheet--checkin .sheet__body { flex: 1; display: flex; flex-direction: column; }
+
+.ci { flex: 1; display: flex; flex-direction: column; }
+.ci__ask { margin-bottom: var(--sp-5); }
+/* список вариантов забирает свободное место, кнопка внизу — под большой палец */
+.ci__options, .ci__syms, .ci__sliders { margin-bottom: auto; }
+
+.ci__head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  margin: calc(var(--sp-2) * -1) 0 var(--sp-5);
+}
+.ci__back {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  border: none; border-radius: var(--r-pill);
+  background: var(--surface-alt); color: var(--ink-2);
+}
+.ci__back svg { width: 19px; height: 19px; }
+.ci__skip {
+  border: none; background: none; padding: 8px 2px;
+  color: var(--ink-3); font-size: var(--t-sm); font-weight: var(--w-medium);
+  margin-left: auto;
+}
+.ci__skip:hover { color: var(--ink-2); }
+
+.ci__dots { flex: 1; display: flex; justify-content: center; gap: 6px; }
+.ci__dot {
+  width: 7px; height: 7px; border-radius: 99px;
+  background: var(--line-strong);
+  transition: all var(--dur-2) var(--ease);
+}
+.ci__dot.is-done { background: var(--accent-line); }
+.ci__dot.is-on { width: 22px; background: var(--accent); }
+
+.ci__q {
+  font-size: var(--t-xl); font-weight: var(--w-bold);
+  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+}
+.ci__hint {
+  font-size: var(--t-sm); color: var(--ink-3);
+  margin-top: 6px; line-height: 1.45;
+}
+
+/* — Список вариантов ——————————————————————————— */
+
+.ci__options { display: flex; flex-direction: column; gap: var(--sp-2); }
+.ci__opt {
+  display: flex; align-items: center; gap: var(--sp-3);
+  min-height: 62px;
+  padding: 10px var(--sp-4);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  text-align: left;
+  transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease),
+              transform var(--dur-1) var(--ease);
+  animation: ci-in var(--dur-2) var(--ease-out) both;
+}
+.ci__options > *:nth-child(1) { animation-delay: 0ms; }
+.ci__options > *:nth-child(2) { animation-delay: 35ms; }
+.ci__options > *:nth-child(3) { animation-delay: 70ms; }
+.ci__options > *:nth-child(4) { animation-delay: 105ms; }
+.ci__options > *:nth-child(5) { animation-delay: 140ms; }
+
+@keyframes ci-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Цветная кромка привязывает ответ к полосе самочувствия на главной:
+   человек запоминает шкалу, не читая легенду. Цветом залит только
+   торец — карточка остаётся спокойной. */
+.ci__opt--mood { position: relative; overflow: hidden; padding-left: var(--sp-5); }
+.ci__opt--mood::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+  background: var(--c, transparent);
+}
+.ci__opt:hover { border-color: var(--line-strong); }
+.ci__opt:active { transform: scale(.985); }
+.ci__opt.is-picked {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.ci__face { font-size: 28px; line-height: 1; flex: none; }
+.ci__label { font-size: var(--t-md); font-weight: var(--w-medium); color: var(--ink); }
+.ci__tick {
+  margin-left: auto; width: 26px; height: 26px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 50%; background: var(--accent); color: #fff;
+  opacity: 0; transform: scale(.5);
+  transition: all var(--dur-2) var(--ease-out);
+}
+.ci__tick svg { width: 15px; height: 15px; }
+.ci__opt.is-picked .ci__tick { opacity: 1; transform: none; }
+
+/* — Шкала цвета мочи в опросе ——————————————————— */
+
+.ci__urine { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--sp-2); }
+.ci__swatch {
+  position: relative; aspect-ratio: 2 / 3;
+  border: 2.5px solid transparent; border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 1px rgba(22, 32, 58, .1);
+  padding: 0;
+  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-1) var(--ease);
+}
+.ci__swatch:hover { transform: translateY(-2px); }
+.ci__swatch.is-picked {
+  border-color: var(--ink);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: inset 0 0 0 1px rgba(22, 32, 58, .1), var(--sh-2);
+}
+.ci__swatch-n {
+  position: absolute; left: 0; right: 0; bottom: 6px;
+  font-size: 12px; font-weight: var(--w-semi); color: rgba(40, 28, 12, .5);
+}
+.ci__swatch:nth-child(n+5) .ci__swatch-n { color: rgba(255, 255, 255, .8); }
+/* Опрос открыт за прошедший день — говорим об этом прямо, иначе
+   человек решит, что правит сегодняшнюю запись. */
+.ci__forDay {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  margin: 0 auto var(--sp-2);
+  padding: 7px 14px; border-radius: var(--r-pill);
+  background: var(--accent-soft); color: var(--accent-deep);
+  font-size: var(--t-sm); font-weight: var(--w-medium); width: fit-content;
+}
+.ci__forDay svg { width: 16px; height: 16px; }
+
+.ci__scale {
+  display: flex; justify-content: space-between;
+  font-size: var(--t-xs); color: var(--ink-3); margin-top: 8px;
+}
+
+/* — Температура ————————————————————————————————— */
+
+.ci__temps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+.ci__temp {
+  padding: var(--sp-5) 4px;
+  border: 1.5px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface);
+  font-size: var(--t-xl); font-weight: var(--w-bold);
+  letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+  transition: all var(--dur-1) var(--ease);
+}
+.ci__temp:hover { border-color: var(--line-strong); }
+.ci__temp:active { transform: scale(.96); }
+.ci__temp.is-picked { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-deep); }
+
+/* — Симптомы ————————————————————————————————————— */
+
+.ci__syms { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+.ci__sym {
+  display: flex; align-items: center; gap: 9px;
+  min-height: 54px; padding: 10px var(--sp-3);
+  border: 1.5px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--ink);
+  text-align: left;
+  transition: all var(--dur-1) var(--ease);
+}
+.ci__sym-ico { font-size: 19px; line-height: 1; flex: none; }
+.ci__sym:active { transform: scale(.96); }
+.ci__sym.is-picked { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-deep); }
+
+/* — Вечерние ползунки ———————————————————————————— */
+
+.ci__sliders { display: flex; flex-direction: column; gap: var(--sp-5); }
+.ci__slider-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: var(--t-md); font-weight: var(--w-medium);
+}
+.ci__slider-head b { font-size: var(--t-lg); font-weight: var(--w-bold); color: var(--accent); }
+.ci__slider-scale {
+  display: flex; justify-content: space-between;
+  font-size: var(--t-xs); color: var(--ink-3);
+}
+
+/* — Нейтральный ответ «не смотрел» ——————————————— */
+
+.ci__plain {
+  display: block; width: 100%;
+  margin-top: var(--sp-5); padding: 14px;
+  border: none; border-radius: var(--r-md);
+  background: none; color: var(--ink-3);
+  font-size: var(--t-base); font-weight: var(--w-medium);
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.ci__plain:hover { background: var(--surface-alt); color: var(--ink-2); }
+
+/* — Финал ————————————————————————————————————————— */
+
+.ci__done {
+  display: flex; flex-direction: column; align-items: center;
+  padding: var(--sp-6) 0 0;
+}
+.ci__seal {
+  width: 72px; height: 72px; margin-bottom: var(--sp-5);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--calm-soft); color: var(--calm);
+  animation: ci-seal var(--dur-3) var(--ease-out) both;
+}
+.ci__seal svg { width: 34px; height: 34px; stroke-width: 2.4; }
+
+@keyframes ci-seal {
+  0%   { opacity: 0; transform: scale(.4); }
+  60%  { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.ci__summary {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2);
+  justify-content: center; margin-top: var(--sp-5);
+}
+.ci__pill {
+  padding: 7px 14px; border-radius: var(--r-pill);
+  background: var(--surface-alt); color: var(--ink-2);
+  font-size: var(--t-sm); font-weight: var(--w-medium);
+}
+
+.card--calm { background: var(--calm-soft); border-color: var(--calm-line); box-shadow: none; }
+.list__ico--calm { background: var(--surface); color: var(--calm); }
+
+/* ==========================================================================
+   Питомец
+
+   Тихий спутник: ничего не требует, не считает пропуски и не
+   расстраивается. Спит, пока день не отмечен, — и только.
+   ========================================================================== */
+
+.pet {
+  --pet-size: 76px;
+  display: block; flex: none; padding: 0; border: none;
+  width: var(--pet-size); height: var(--pet-size);
+  background: none; line-height: 0;
+}
+button.pet { cursor: pointer; border-radius: var(--r-lg); }
+button.pet:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.pet__art {
+  width: 100%; height: 100%; display: block;
+  object-fit: contain; -webkit-user-drag: none;
+}
+
+@keyframes pet-in {
+  from { opacity: 0; transform: translateY(12px) scale(.78); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pet-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-1.5px) scale(1.02); }
+}
+@keyframes pet-bounce {
+  0%, 68%, 100% { transform: translateY(0); }
+  80%           { transform: translateY(-5px); }
+  90%           { transform: translateY(0); }
+}
+.pet__art { animation: pet-in var(--dur-3) var(--ease-out) both; }
+.pet--sleep .pet__art, .pet--calm .pet__art, .pet--soft .pet__art {
+  animation: pet-in var(--dur-3) var(--ease-out) both,
+             pet-breathe 3.8s var(--ease) .55s infinite;
+}
+.pet--happy .pet__art {
+  animation: pet-in var(--dur-3) var(--ease-out) both,
+             pet-bounce 2.6s var(--ease) .55s infinite;
+}
+button.pet:hover .pet__art { animation-play-state: paused; transform: scale(1.06); }
+
+@keyframes pet-zzz {
+  0%   { opacity: 0; transform: translate(0, 6px); }
+  30%  { opacity: 1; }
+  65%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(4px, -10px); }
+}
+.pet__zzz { animation: pet-zzz 3.4s var(--ease) infinite; }
+
+@keyframes pet-heart {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+.pet__heart {
+  transform-box: fill-box; transform-origin: center;
+  animation: pet-heart 2.3s var(--ease) infinite;
+}
+
+/* — Выбор питомца ————————————————————————————————— */
+.petpick { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.petpick__opt {
+  display: grid; justify-items: center; gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-2);
+  border: 1.5px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface-2); cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease),
+              background var(--dur-1) var(--ease),
+              transform var(--dur-1) var(--ease);
+}
+.petpick__opt:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+.petpick__opt.is-picked { border-color: var(--accent); background: var(--accent-soft); }
+.petpick__opt .pet { --pet-size: 62px; }
+.petpick__name { font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--ink); }
+.petpick__none {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  min-height: 52px;
+}
+.petpick__none .petpick__name { color: var(--ink-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pet__art, .pet__zzz, .pet__heart { animation: none !important; }
+}
+
+/* ==========================================================================
+   Быстрая запись: два частых действия крупно, остальное списком
+   ========================================================================== */
+
+/* Плиток стало три. На узком листе третья уходит во всю ширину и
+   выглядит как полоса, на широком все три встают в ряд. */
+.qa-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+  gap: var(--sp-3);
+}
+
+.qa-tile {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  padding: var(--sp-4);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(120% 120% at 0% 0%, var(--accent-soft) 0%, transparent 70%),
+    var(--surface);
+  text-align: left;
+  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease);
+  animation: ci-in var(--dur-2) var(--ease-out) both;
+}
+.qa-tile:hover { box-shadow: var(--sh-2); }
+.qa-tile:active { transform: scale(.97); }
+.qa-tile__ico {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 13px; background: var(--accent); color: #fff;
+  margin-bottom: 2px;
+}
+.qa-tile__ico svg { width: 21px; height: 21px; }
+.qa-tile__t { font-size: var(--t-base); font-weight: var(--w-semi); color: var(--ink); }
+.qa-tile__s { font-size: var(--t-xs); color: var(--ink-3); line-height: 1.35; }
+
+/* ==========================================================================
+   Шапка дня
+   ========================================================================== */
+
+.dayhead {
+  display: flex; align-items: flex-end; gap: var(--sp-5);
+  flex-wrap: wrap;
+  padding: var(--sp-4) 2px var(--sp-2);
+}
+.dayhead__greet {
+  font-size: var(--t-lg); font-weight: var(--w-semi);
+  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+}
+.dayhead__date { font-size: var(--t-sm); color: var(--ink-3); margin-top: 2px; }
+
+.dayhead__facts {
+  display: flex; gap: var(--sp-5); margin-left: auto; flex-wrap: wrap;
+}
+@media (max-width: 420px) {
+  .dayhead { gap: var(--sp-3); }
+  .dayhead__facts { gap: var(--sp-4); margin-left: 0; }
+  .fact__v { font-size: var(--t-sm); }
+}
+.fact { display: flex; flex-direction: column; gap: 1px; }
+.fact__k {
+  font-size: 11px; font-weight: var(--w-semi); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.fact__v {
+  font-size: var(--t-base); font-weight: var(--w-semi); color: var(--ink);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ==========================================================================
+   Бенто-сетка
+
+   На телефоне — одна колонка. На широком экране плитки разного размера
+   складываются в плотную решётку: страница заполнена, и главное видно
+   без прокрутки.
+   ========================================================================== */
+
+.section--flush { margin-top: 0; }
+
+/* ==========================================================================
+   Раскладка «Сегодня»
+
+   Два столбца: слева то, ради чего дневник открывают каждый день,
+   справа то, куда заглядывают по необходимости. На телефоне колонки
+   встают друг под друга, и отметка дня оказывается на первом экране.
+   ========================================================================== */
+
+.today { display: flex; flex-direction: column; }
+.today > * { min-width: 0; }
+
+/* — Колонка дня ——————————————————————————————————— */
+
+.daycol {
+  display: flex; flex-direction: column; gap: var(--sp-6);
+  padding-bottom: var(--sp-6);
+}
+.daycol__date {
+  font-size: var(--t-sm); font-weight: var(--w-semi);
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
+}
+.daycol__greet {
+  margin-top: 4px;
+  font-size: var(--t-2xl); font-weight: var(--w-bold);
+  letter-spacing: -.025em; line-height: 1.1;
+}
+
+/* — Кольцо цикла ——————————————————————————————————— */
+
+.cycle { display: flex; flex-direction: column; align-items: center; }
+.cycle__foot {
+  margin-top: var(--sp-4);
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--sp-3); flex-wrap: wrap;
+}
+.ring-next { font-size: var(--t-base); color: var(--ink-2); text-align: center; }
+.ring-next b { color: var(--ink); font-weight: var(--w-semi); }
+
+/* — Отметка дня ———————————————————————————————————
+   Пока день не отмечен, здесь единственная яркая кнопка экрана. */
+
+.mark { display: flex; flex-direction: column; gap: var(--sp-3); }
+.mark__top { display: flex; align-items: center; gap: var(--sp-3); }
+.mark__top .mark__t { flex: 1; min-width: 0; }
+.mark__main { display: flex; flex-direction: column; gap: 10px; }
+.mark__t {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-size: var(--t-lg); font-weight: var(--w-bold); letter-spacing: -.02em;
+}
+.mark__check {
+  width: 28px; height: 28px; flex: none;
+  display: grid; place-items: center; line-height: 0;
+  border-radius: 50%; background: var(--calm-soft); color: var(--calm);
+}
+.mark__check svg { width: 17px; height: 17px; }
+.mark__s { font-size: var(--t-sm); color: var(--ink-2); }
+.mark__row { display: flex; gap: 10px; }
+.mark__sos { flex: none; min-width: 50px; padding-left: 0; padding-right: 0; }
+.mark__sos svg { color: var(--alert); }
+.mark__sos:hover { border-color: var(--alert); background: var(--alert-soft); }
+
+.mark__bits { display: flex; flex-wrap: wrap; gap: 6px; }
+.mark__bit {
+  padding: 6px 12px; border-radius: var(--r-pill);
+  background: var(--surface-alt); color: var(--ink-2);
+  font-size: var(--t-sm); font-weight: var(--w-medium); white-space: nowrap;
+}
+
+/* Питомец сидит рядом на мягком световом пятне: присутствие,
+   а не элемент управления. Нажатие открывает выбор. */
+.mark__pet {
+  flex: none; display: grid; place-items: center; margin: -10px 0;
+  width: 96px; height: 96px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 62%,
+    rgba(43, 91, 215, .10) 0%, rgba(43, 91, 215, 0) 68%);
+}
+.mark__pet .pet { --pet-size: 72px; }
+.mark.is-done .mark__pet {
+  background: radial-gradient(circle at 50% 62%,
+    rgba(11, 110, 86, .12) 0%, rgba(11, 110, 86, 0) 68%);
+}
+
+/* — Две недели самочувствия ————————————————————————
+   Высота столбика и цвет говорят одно и то же: полоса читается и
+   тем, кто различает цвета хуже. */
+
+.weeks { display: flex; flex-direction: column; gap: var(--sp-3); }
+.weeks__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+.weeks__t { font-size: var(--t-md); font-weight: var(--w-bold); letter-spacing: -.015em; }
+.weeks__link {
+  font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--accent);
+  background: none; border: none; min-height: 44px; padding: 2px 0; cursor: pointer;
+}
+.weeks__link:hover { color: var(--accent-deep); text-decoration: underline; }
+
+.strip { display: flex; gap: 4px; align-items: stretch; height: 56px; }
+/* Кнопка во всю высоту, столбик внутри: пропущенный день — такая же
+   мишень, как отмеченный, хотя рисуется ниже. */
+.strip__c {
+  flex: 1; min-width: 0; padding: 0; border: none; background: none;
+  display: flex; align-items: flex-end; cursor: pointer;
+}
+.strip__bar {
+  position: relative;
+  width: 100%; height: var(--hgt, 46px);
+  border-radius: 7px 7px 4px 4px;
+  background: var(--c, var(--surface-alt));
+  animation: rise var(--dur-3) var(--ease-out) both;
+  transition: height var(--dur-2) var(--ease), filter var(--dur-1) var(--ease);
+}
+.strip__bar.is-empty {
+  height: 16px;
+  background: var(--surface-alt);
+  border: 1.5px dashed var(--line-strong);
+}
+.strip__c:hover .strip__bar { filter: brightness(1.06); }
+.strip__c.is-today .strip__bar { box-shadow: 0 0 0 2px var(--ink); }
+.strip__dot {
+  position: absolute; left: 50%; top: 5px; translate: -50% 0;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--surface); box-shadow: 0 0 0 1.5px rgba(34, 30, 25, .35);
+}
+@keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+
+/* Строка переносится целыми кусками, а не посреди «9 дней / назад». */
+.weeks__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 4px var(--sp-3);
+  font-size: var(--t-sm); color: var(--ink-2);
+}
+.weeks__foot > * { white-space: nowrap; }
+.weeks__scale { display: flex; align-items: center; gap: 3px; }
+.weeks__scale i { width: 13px; height: 8px; border-radius: 2px; display: block; }
+.weeks__scale span { margin-left: 5px; }
+
+/* — Сводка ————————————————————————————————————————— */
+
+.summary { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+/* ==========================================================================
+   Карточка-плитка
+
+   Спокойная: тонкая рамка вместо тени, чтобы приподнятой на экране
+   оставалась только главная кнопка. Заголовок внутри и отбит волоском.
+   ========================================================================== */
+
+.tile {
+  display: flex; flex-direction: column;
+  padding: var(--sp-5) 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.tile__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--line-soft);
+}
+.tile__title {
+  margin: 0;
+  font-size: var(--t-md); font-weight: var(--w-bold);
+  letter-spacing: -.015em; color: var(--ink);
+}
+.tile__action {
+  flex: none; padding: 4px 0; min-height: 44px;
+  font-size: var(--t-sm); font-weight: var(--w-medium);
+  color: var(--accent); background: none; border: none; cursor: pointer;
+}
+.tile__action:hover { color: var(--accent-deep); text-decoration: underline; }
+.tile__body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.tile__sub {
+  margin: var(--sp-5) 0 var(--sp-2);
+  font-size: var(--t-sm); font-weight: var(--w-semi); color: var(--ink-2);
+}
+.tile__sub--split { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+
+.tile__chart { min-height: 178px; }
+.tile__notes {
+  margin-top: var(--sp-3); padding-top: var(--sp-3);
+  border-top: 1px solid var(--line-soft);
+  font-size: var(--t-sm); color: var(--ink-2); line-height: 1.45;
+}
+.tile__empty {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--sp-2); padding: var(--sp-6) var(--sp-4);
+  text-align: center; color: var(--ink-2); font-size: var(--t-sm);
+}
+.tile__empty--sm { min-height: 178px; padding: var(--sp-4); }
+
+/* ==========================================================================
+   Дела на сегодня и что дальше
+
+   Внутри плитки дела — строки списка, а не стопка отдельных карточек:
+   карточка в карточке удваивает рамки.
+   ========================================================================== */
+
+.tile--agenda .stack--sm { gap: 0; }
+.tile--agenda .task {
+  padding: var(--sp-3) 0;
+  border: none; border-radius: 0; background: none;
+}
+.tile--agenda .task + .task { border-top: 1px solid var(--line-soft); }
+.tile--agenda .task.is-done { background: none; }
+
+.agenda__clear {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--calm-soft);
+}
+.agenda__later { padding-top: var(--sp-2); }
+.agenda__later .tile__sub { margin-top: var(--sp-4); }
+.agenda__row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; text-align: left; min-height: 56px; padding: 10px 0;
+  border: none; background: none; color: inherit; cursor: pointer;
+}
+.agenda__row + .agenda__row { border-top: 1px solid var(--line-soft); }
+.agenda__ico {
+  width: 36px; height: 36px; flex: none;
+  display: grid; place-items: center;
+  border-radius: var(--r-sm); background: var(--accent-soft); color: var(--accent);
+}
+.agenda__ico svg { width: 19px; height: 19px; }
+.agenda__row:hover .list__t { color: var(--accent); }
+
+/* ==========================================================================
+   Препараты сейчас
+
+   Схема, а не список дел: название с дозой, чем является, и время
+   приёма отметками рядом. Нажатие на время отмечает приём.
+   ========================================================================== */
+
+.meds__list { display: flex; flex-direction: column; }
+.meds__row { display: flex; gap: var(--sp-3); align-items: center; padding: var(--sp-3) 0; }
+.meds__row + .meds__row { border-top: 1px solid var(--line-soft); }
+.meds__ico {
+  width: 36px; height: 36px; flex: none;
+  display: grid; place-items: center;
+  border-radius: var(--r-sm); background: var(--info-soft); color: var(--info);
+}
+.meds__ico svg { width: 19px; height: 19px; }
+.meds__body { flex: 1; min-width: 0; }
+.meds__name { font-size: var(--t-base); font-weight: var(--w-semi); line-height: 1.3; }
+.meds__note { font-size: var(--t-sm); color: var(--ink-2); margin-top: 1px; line-height: 1.35; }
+.meds__times { display: flex; flex-wrap: wrap; gap: 7px; flex: none; }
+
+/* Время — оно же отметка приёма. Отдельная галочка сбоку потребовала бы
+   целиться дважды: сначала прочитать время, потом попасть в кружок. */
+.meds__time {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; min-width: 92px; padding: 8px 14px;
+  border: 1.5px solid var(--line-strong); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink);
+  font-size: var(--t-base); font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums; cursor: pointer;
+  transition: background var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease),
+              color var(--dur-1) var(--ease),
+              transform var(--dur-1) var(--ease);
+}
+.meds__time svg { width: 15px; height: 15px; opacity: .3; }
+.meds__time:hover { border-color: var(--accent); }
+.meds__time:active { transform: scale(.95); }
+.meds__time.is-taken {
+  border-color: var(--calm-line); background: var(--calm-soft); color: var(--calm);
+}
+.meds__time.is-taken svg { opacity: 1; }
+
+.meds__skip { margin-top: 6px; font-size: var(--t-sm); color: var(--ink-2); }
+.meds__foot {
+  margin-top: auto; padding-top: var(--sp-3);
+  border-top: 1px solid var(--line-soft);
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+  font-size: var(--t-sm); color: var(--ink-2);
+}
+
+/* ==========================================================================
+   Тихие строки: цвет мочи и «Мне плохо»
+   ========================================================================== */
+
+.quiet {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; min-height: 64px; text-align: left;
+  padding: 10px 22px;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface); color: inherit; cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease);
+}
+.quiet:hover { border-color: var(--accent); }
+.quiet__t { font-size: var(--t-base); font-weight: var(--w-semi); flex: none; }
+.quiet__s { font-size: var(--t-sm); color: var(--ink-2); flex: 1; min-width: 0; }
+.quiet > svg.ico { flex: none; color: var(--ink-2); }
+
+.ustrip { display: flex; gap: 4px; margin-left: auto; flex: none; }
+.ustrip i {
+  width: 11px; height: 22px; border-radius: 5px; display: block;
+  background: var(--surface-alt);
+}
+.ustrip i.is-empty { border: 1.5px dashed var(--line-strong); background: none; }
+
+.quiet--sos { background: var(--alert-soft); border-color: var(--alert-line); }
+.quiet--sos:hover { border-color: var(--alert); }
+.quiet--sos > svg.ico:first-child { color: var(--alert); }
+
+.disclaimer { margin-top: var(--sp-2); }
+
+/* ==========================================================================
+   «Сегодня» на телефоне
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .daycol { gap: var(--sp-5); }
+  .daycol__greet { font-size: var(--t-xl); }
+  .ring-wrap { width: 148px; height: 148px; }
+  .ring-day { font-size: var(--t-3xl); }
+
+  /* Легенда и счётчик в одну строку не помещаются и рвут слова. */
+  .weeks__foot { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+  .mark__pet { width: 92px; height: 92px; }
+  .mark__pet .pet { --pet-size: 68px; }
+
+  .tile { padding: var(--sp-4); }
+  /* Время приёма на всю ширину строки: попасть пальцем проще,
+     а название препарата не сжимается до переносов по слогам. */
+  .meds__row { flex-wrap: wrap; }
+  .meds__times { width: 100%; }
+  .meds__time { flex: 1; min-width: 0; }
+
+  .quiet { padding: 10px var(--sp-4); flex-wrap: wrap; }
+  .quiet__s { flex-basis: 100%; }
+  .ustrip { margin-left: 0; }
+}
+
+@media (max-width: 380px) {
+  .ring-wrap { width: 134px; height: 134px; }
+  .ring-day { font-size: var(--t-2xl); }
+  .ring-left { font-size: var(--t-xs); padding: 4px 10px; }
+}
+
+/* ==========================================================================
+   Окно записи
+
+   Список сдач и список препаратов — это перечень отдельных документов,
+   а не сплошной текст. У каждого своя шапка на подложке: дата и метки
+   сверху, содержимое ниже. Без неё карточки читались как абзацы,
+   идущие подряд.
+   ========================================================================== */
+
+.win { padding: 0; overflow: hidden; }
+
+/* Панель подробностей живёт в разметке всегда, но показывается только
+   там, где для неё есть ширина (см. desktop.css). Без этого правила её
+   содержимое повторялось бы под списком на телефоне. */
+.labs-side { display: none; }
+.win__head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2);
+  padding: 12px var(--sp-5);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.win__date {
+  font-size: var(--t-base); font-weight: var(--w-bold);
+  letter-spacing: -.015em; color: var(--ink); white-space: nowrap;
+}
+.win__head > svg.ico { flex: none; color: var(--ink-2); margin-left: auto; }
+.win__body { padding: var(--sp-4) var(--sp-5) var(--sp-5); }
+.win:hover .win__head { background: var(--accent-soft); }
+.win:hover .win__date { color: var(--accent-deep); }
+
+/* Месяц отбивает группы окон друг от друга. */
+.month-head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  font-size: var(--t-md) !important; font-weight: var(--w-bold) !important;
+  color: var(--ink) !important; letter-spacing: -.015em;
+  padding: var(--sp-6) 2px var(--sp-3) !important;
+}
+.month-head::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+
+/* ==========================================================================
+   Экскурсия по приложению
+
+   Затемнение с вырезом собрано на маске SVG, подробности в tour.js.
+   ========================================================================== */
+
+.tour {
+  position: fixed; inset: 0; z-index: 95;
+  outline: none;
+  animation: tour-fade var(--dur-3) var(--ease-out) both;
+}
+.tour.is-out { animation: tour-out var(--dur-2) var(--ease) both; }
+@keyframes tour-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tour-out { to { opacity: 0; } }
+
+.tour__veil { position: fixed; inset: 0; }
+/* 100vw, а не 100%: иначе полоса прокрутки остаётся неприкрытой. */
+.tour__veil svg { display: block; width: 100vw; height: 100%; }
+.tour__dim { fill: var(--veil); }
+
+/* Пульсирующая обводка: видно, куда смотреть, даже если вырез крупный. */
+.tour__ring {
+  stroke: var(--accent); stroke-width: 2;
+  animation: tour-ring 2s var(--ease) infinite;
+}
+@keyframes tour-ring {
+  0%, 100% { stroke-opacity: .95; }
+  50%      { stroke-opacity: .3; }
+}
+
+/* Шаг без цели: просто ровное затемнение. */
+.tour.is-plain .tour__cut,
+.tour.is-plain .tour__ring { display: none; }
+
+.tour__card {
+  position: fixed;
+  left: 50%; top: 50%; translate: -50% -50%;
+  width: min(460px, calc(100vw - 32px));
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--sh-3);
+  animation: tour-in var(--dur-3) var(--ease-out) both;
+  transition: left var(--dur-3) var(--ease), top var(--dur-3) var(--ease);
+}
+.tour__card[data-arrow] { translate: none; }
+@keyframes tour-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* Уголок в сторону подсветки. */
+.tour__card[data-arrow="up"]::before,
+.tour__card[data-arrow="down"]::before {
+  content: ''; position: absolute; left: var(--arrow-x, 50%);
+  width: 14px; height: 14px; translate: -50% 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.tour__card[data-arrow="up"]::before {
+  top: -8px; rotate: 45deg; border-right: 0; border-bottom: 0;
+}
+.tour__card[data-arrow="down"]::before {
+  bottom: -8px; rotate: 45deg; border-left: 0; border-top: 0;
+}
+
+.tour__head { display: flex; align-items: center; gap: var(--sp-3); }
+.tour__pet { flex: none; }
+.tour__count {
+  font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--ink-2);
+  letter-spacing: .02em;
+}
+.tour__title {
+  margin: 2px 0 0; font-size: var(--t-md); font-weight: var(--w-bold);
+  letter-spacing: -.015em; padding-right: var(--sp-6);
+}
+.tour__text {
+  margin: var(--sp-3) 0 0; font-size: var(--t-base); color: var(--ink-2);
+  line-height: 1.45; text-wrap: pretty;
+}
+.tour__dots { display: flex; gap: 5px; margin-top: var(--sp-4); }
+.tour__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--line-strong);
+  transition: background var(--dur-2) var(--ease), width var(--dur-2) var(--ease);
+}
+.tour__dot.is-done { background: var(--accent-line); }
+.tour__dot.is-on { width: 20px; border-radius: 99px; background: var(--accent); }
+
+.tour__foot { display: flex; align-items: center; gap: var(--sp-2); margin-top: var(--sp-4); }
+.tour__skip { margin-right: auto; padding-left: 0; color: var(--ink-2); }
+.tour__skip:hover { color: var(--ink); }
+.tour__close {
+  position: absolute; top: 8px; right: 8px;
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border: none; border-radius: 50%; background: none;
+  color: var(--ink-2); cursor: pointer;
+}
+.tour__close:hover { background: var(--surface-alt); color: var(--ink); }
+.tour__close svg { width: 18px; height: 18px; }
+
+@media (max-width: 759px) {
+  .tour__card {
+    left: var(--sp-4); right: var(--sp-4); top: auto;
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--sp-4));
+    width: auto; translate: none;
+  }
+  .tour__card[data-arrow]::before { display: none; }
+  .badger { --badger-size: 64px; }
+}
+
+/* — Медоед ————————————————————————————————————————— */
+
+.badger {
+  --badger-size: 76px;
+  display: block; width: var(--badger-size); height: var(--badger-size);
+  line-height: 0;
+}
+.badger__art {
+  width: 100%; height: 100%; display: block;
+  object-fit: contain; -webkit-user-drag: none;
+}
+@keyframes badger-in {
+  from { opacity: 0; transform: translateY(10px) scale(.86); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes badger-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-1.5px) scale(1.02); }
+}
+.badger__art {
+  animation: badger-in var(--dur-3) var(--ease-out) both,
+             badger-breathe 3.8s var(--ease) .55s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badger__art, .tour__ring { animation: none !important; }
+  .tour__card { transition: none !important; }
+}
+
+/* — Норма конкретной лаборатории —————————————————————
+   У ЛДГ верхняя граница зависит от реактива, поэтому её можно списать
+   с бланка и хранить вместе с результатом. */
+.an-row__ownbtn {
+  margin-top: 3px; padding: 4px 0; min-height: 32px;
+  border: none; background: none; cursor: pointer;
+  font-size: var(--t-sm); font-weight: var(--w-medium); color: var(--accent);
+}
+.an-row__ownbtn:hover { color: var(--accent-deep); text-decoration: underline; }
+.an-row__own { grid-column: 1 / -1; margin: 2px 0 10px; }
+.an-row__own .input { text-align: left; }
+
+.lab-val__ref { color: var(--ink-2); font-weight: var(--w-normal); white-space: nowrap; }

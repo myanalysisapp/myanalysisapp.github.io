@@ -1,0 +1,466 @@
+/* ==========================================================================
+   Планшет и компьютер.
+
+   Три размера:
+     до 720px    — телефон: нижняя панель, одна колонка (остальные файлы)
+     720–1023px  — планшет: нижняя панель плавающей пилюлей, колонка шире
+     от 1024px   — компьютер: боковая навигация, контент в две колонки
+   ========================================================================== */
+
+/* ==========================================================================
+   Планшет
+   ========================================================================== */
+
+@media (min-width: 720px) {
+  :root { --maxw: 680px; }
+
+  .screen {
+    padding-left: var(--sp-6); padding-right: var(--sp-6);
+    padding-bottom: calc(var(--tabbar-h) + 52px);
+  }
+  .appbar__in { padding-left: var(--sp-6); padding-right: var(--sp-6); }
+
+  /* нижняя панель превращается в плавающую пилюлю по центру */
+  .nav {
+    left: 50%; right: auto; bottom: 22px;
+    transform: translateX(-50%);
+    width: min(440px, calc(100vw - 48px));
+    border: 1px solid var(--line-soft);
+    border-top: 1px solid var(--line-soft);
+    border-radius: var(--r-pill);
+    box-shadow: var(--sh-3);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  .nav__items { height: 58px; }
+
+  .fab { right: calc(50% - 292px); bottom: 22px; }
+
+  .qa-grid { grid-template-columns: repeat(4, 1fr); }
+
+  .sheet-backdrop { align-items: center; }
+  .sheet {
+    border-radius: var(--r-2xl);
+    max-height: 86dvh;
+    max-width: 560px;
+  }
+  .sheet__grab { display: none; }
+  .sheet__head { padding-top: var(--sp-5); }
+  .sheet__foot { padding-bottom: var(--sp-4); }
+  .toast-host { bottom: 30px; }
+
+  /* на широком экране мини-карточки и задачи дышат свободнее */
+  .metric-row { gap: var(--sp-3); }
+  .urine-row { gap: var(--sp-3); }
+
+  .ob__inner { max-width: 520px; }
+  .ob__art svg { width: min(320px, 80vw); }
+}
+
+/* ==========================================================================
+   Компьютер: боковая навигация
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  :root {
+    --maxw: 1080px;
+    --nav-w: var(--rail);
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: var(--nav-w) minmax(0, 1fr);
+    align-items: start;
+    min-height: 100dvh;
+  }
+  /* приветствие показывается до того, как появится боковая панель —
+     колоночная сетка его бы сплющила */
+  #app.is-onboarding { display: block; }
+
+  .main { min-width: 0; }
+
+  /* — Рельс со значками —
+     Раньше здесь была колонка в 252px с названием приложения и
+     подписью. Название человек и так знает, а место лучше отдать
+     содержимому: на рельсе остались знак, четыре раздела и «Запись». */
+
+  .nav {
+    position: sticky;
+    top: 0;
+    left: auto; right: auto; bottom: auto;
+    transform: none;
+    width: auto;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    padding: 18px 14px 16px;
+    border: none;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: hidden;
+  }
+
+  /* Знак и название рядом: рельса хватает, чтобы приложение
+     представилось, а не просто поставило точку в углу. */
+  .nav__brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 8px 16px;
+  }
+  .nav__brand img, .nav__brand svg {
+    flex: none;
+    width: 36px; height: 36px; border-radius: var(--r-sm); display: block;
+  }
+  .nav__name {
+    font-size: var(--t-lg); font-weight: var(--w-bold);
+    line-height: 1.15; letter-spacing: -.015em; color: var(--ink);
+    white-space: nowrap;
+  }
+  /* На широком рельсе подпись наконец помещается своим кеглем. */
+  .nav__sub {
+    font-size: var(--t-xs); color: var(--ink-2); line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .nav__items {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    height: auto;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Значок слева, подпись сразу за ним — одной строкой. Раньше подпись
+     стояла под значком, и рельс приходилось держать узким. */
+  .tab {
+    flex: none;
+    width: 100%; min-height: 48px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--r-md);
+    color: var(--ink-2);
+    font-size: var(--t-base); font-weight: var(--w-semi); letter-spacing: -.02em;
+  }
+  .tab span { line-height: 1.2; white-space: nowrap; }
+  .tab__full { display: inline; }
+  .tab__short { display: none; }
+  .tab svg { width: 22px; height: 22px; }
+  .tab:hover { background: var(--surface-alt); color: var(--ink); }
+  .tab[aria-current="page"] {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .tab[aria-current="page"] svg { transform: none; color: var(--accent); }
+
+  .nav__add {
+    margin-top: 14px;
+    width: 100%; min-height: 52px; flex: none;
+    display: flex; align-items: center; justify-content: flex-start; gap: 12px;
+    padding: 10px 12px;
+    border: none; border-radius: var(--r-md);
+    background: var(--accent); color: var(--ink-on-accent);
+    font-size: var(--t-base); font-weight: var(--w-bold); letter-spacing: -.02em;
+    transition: background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .nav__add:hover { background: var(--accent-deep); }
+  .nav__add:active { transform: scale(.95); }
+  .nav__add svg { width: 24px; height: 24px; }
+
+  .nav__foot {
+    margin-top: auto;
+    font-size: var(--t-sm); color: var(--ink-2);
+    line-height: 1.25; padding: 0 12px;
+  }
+
+  .fab { display: none; }
+
+  /* — Шапка и контент — */
+
+  .appbar { background: color-mix(in srgb, var(--bg) 92%, transparent); }
+  .appbar__in {
+    max-width: var(--maxw);
+    padding: 9px var(--sp-7);
+    min-height: 50px;
+  }
+  /* знак уже стоит в боковой панели — в шапке он лишний
+     (правило нарочно привязано к .appbar: тот же класс носит знак в панели) */
+  .appbar > .appbar__in > .appbar__logo { display: none; }
+  .appbar__title { font-size: var(--t-lg); }
+
+  .screen {
+    max-width: var(--maxw);
+    padding: 0 var(--sp-7) var(--sp-8);
+  }
+
+  .toast-host { left: var(--nav-w); bottom: 28px; }
+
+  /* — Две колонки —
+     .cols переносит вторую половину экрана вправо; на телефоне обе
+     колонки просто идут одна под другой.                              */
+
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 var(--sp-6);
+    align-items: start;
+  }
+  .cols > .col { display: flex; flex-direction: column; }
+  .cols > .col > .section:first-child { margin-top: var(--sp-5); }
+
+  /* — Сетки карточек —
+     Однотипные карточки (графики, препараты, сдачи) встают в два столбца. */
+
+  /* 430px, а не 330: в шапку окна должны помещаться дата и метки
+     «до инфузии · день 14» в одну строку. При трёх столбцах дата
+     переносилась на вторую строку. */
+  .deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+    gap: var(--sp-4);
+    align-items: start;
+  }
+  .deck > * { margin: 0; }
+
+  /* заголовок месяца в списке анализов занимает всю ширину */
+  .month-head--span { grid-column: 1 / -1; }
+
+  /* Перечни строк — сдачи, препараты, разделы — держат одну ширину
+     на всех вкладках и прижаты влево. Строка во весь монитор глазом
+     не читается: взгляд теряет начало следующей. */
+  .screen--list > * {
+    max-width: var(--list-w);
+    margin-left: 0; margin-right: auto;
+  }
+  /* Сноска центрируется по перечню, а не по всей странице. */
+  .screen--list > .disclaimer { max-width: var(--list-w); }
+
+  /* — «Анализы»: перечень и подробности рядом —
+     Раньше щелчок по сдаче уводил на отдельный экран: место в списке
+     терялось, а чтобы сравнить с предыдущей, приходилось возвращаться
+     и искать её заново. Теперь значения стоят на одном месте, а список
+     под рукой. Панель появляется только там, где для неё есть ширина. */
+  .screen--list > .labs-split { max-width: none; }
+  .labs-split__main { max-width: var(--list-w); }
+
+  /* Перечни сдач и препаратов остаются одной колонкой: список
+     читается легче мозаики. */
+  /* align-items: stretch обязательно: у .deck выше стоит start, и в
+     колонке карточки сжимались до ширины своего содержимого. */
+  .deck--list {
+    display: flex; flex-direction: column; align-items: stretch;
+    gap: var(--sp-3);
+  }
+
+
+  /* Окно широкое, поэтому вторая строка уходит вправо: значения слева,
+     панель и лаборатория справа. Иначе половина окна пустует. */
+  .win__body {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--sp-5);
+  }
+  .win__body > .lab-item__vals { flex: 1; min-width: 0; }
+  .win__body > .list__s { flex: none; margin-top: 0 !important; text-align: right; }
+
+  /* в «Ещё» группы идут карточками, у каждой свой заголовок */
+  .deck--groups { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .deck--groups > .section { margin-top: 0; }
+
+  /* — Мелочи под широкий экран — */
+
+  .qa-grid { grid-template-columns: repeat(5, 1fr); }
+  .ring-wrap { width: 176px; height: 176px; }
+  .metric-row { grid-template-columns: repeat(4, 1fr); }
+  .section__head { padding: 0 4px; }
+
+  .sheet { max-width: 620px; }
+  .sheet--wide { max-width: 840px; }
+
+  /* — Приветствие: картинка слева, текст и кнопки справа — */
+
+  .ob { padding: var(--sp-7); }
+
+  .ob__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--sp-8);
+    max-width: 980px;
+    min-height: 0;
+  }
+  .ob__side {
+    min-height: 0;
+    padding: var(--sp-6);
+    border-radius: var(--r-2xl);
+    background:
+      radial-gradient(120% 110% at 30% 0%, var(--accent-soft) 0%, transparent 70%),
+      var(--surface);
+    border: 1px solid var(--line-soft);
+    box-shadow: var(--sh-2);
+  }
+  .ob__art svg { width: min(340px, 100%); }
+
+  .ob__body { text-align: left; }
+  .ob__brand { justify-content: flex-start; margin-bottom: var(--sp-5); }
+  .ob__t { font-size: var(--t-3xl); text-align: left; line-height: 1.1; }
+  .ob__s { text-align: left; align-self: flex-start; font-size: var(--t-md); max-width: 38ch; }
+  .ob__dots { justify-content: flex-start; margin: var(--sp-6) 0; }
+  .ob__acts {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  .ob__acts .btn--block { width: auto; flex: 0 0 auto; min-width: 200px; }
+  .ob__acts .btn--quiet { min-width: 0; }
+  .ob__form { max-width: 440px; }
+  .ob__note { text-align: left; margin: var(--sp-4) 0 0; padding: 0; max-width: 44ch; }
+
+  /* подсказки при наведении — на компьютере это ожидаемо */
+  .card--hover { transition: box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease); }
+  .card--hover:hover { box-shadow: var(--sh-3); transform: translateY(-1px); }
+  .list__item:hover { background: var(--surface-2); }
+  .btn:hover { filter: brightness(1.03); }
+  .chip:hover { border-color: var(--line-strong); }
+}
+
+/* ==========================================================================
+   Очень широкий экран: центрируем и чуть добавляем воздуха
+   ========================================================================== */
+
+@media (min-width: 1400px) {
+  /* --maxw задаётся ниже одной лесенкой; ширина рельса одна на всех
+     разрешениях — она выведена из длины слова «Лекарства». */
+  .screen { padding-left: var(--sp-8); padding-right: var(--sp-8); }
+  .appbar__in { padding-left: var(--sp-8); padding-right: var(--sp-8); }
+}
+
+/* ==========================================================================
+   Мышь есть — показываем состояния наведения; сенсор — нет
+   ========================================================================== */
+
+@media (hover: none) {
+  .tab:hover, .list__item:hover, .btn:hover, .chip:hover,
+  .card--hover:hover, .nav__add:hover { background: initial; filter: none; transform: none; }
+}
+
+/* ==========================================================================
+   «Сегодня» на компьютере
+
+   Колонка дня закреплена слева и не уезжает при прокрутке: кольцо и
+   отметка должны быть под рукой, сколько бы ни было сводки справа.
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  /* Ширину не ограничиваем: при потолке содержимое вставало по центру,
+     и сразу за белым рельсом оставалась полоса пустого фона. Теперь
+     оно начинается вплотную за ним и тянется до правого поля. */
+  :root { --maxw: none; }
+
+  /* Зазор между колонками держим узким: разделяет их линейка, а не
+     полоса пустоты в полсотни пикселей. */
+  .today {
+    display: grid;
+    grid-template-columns: minmax(246px, 286px) minmax(0, 1fr);
+    gap: var(--sp-5);
+    align-items: start;
+  }
+
+  .daycol {
+    position: sticky; top: var(--sp-5);
+    padding: 0 var(--sp-4) var(--sp-5) 0;
+    border-right: 1px solid var(--line);
+    max-height: calc(100dvh - var(--sp-7));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .daycol__greet { font-size: var(--t-xl); }
+
+  .ring-wrap { width: 155px; height: 155px; }
+  .ring-day { font-size: var(--t-4xl); }
+
+  .mark__pet { width: 68px; height: 68px; }
+  .mark__pet .pet { --pet-size: 52px; }
+
+  .summary { padding-bottom: var(--sp-6); }
+
+  /* Кнопка во всю ширину карточки выглядит растянутой: ограничиваем. */
+  .tile .btn--block { width: auto; min-width: 240px; align-self: flex-start; }
+
+  .dayhead { padding: var(--sp-5) 4px var(--sp-4); }
+  .dayhead__greet { font-size: var(--t-xl); }
+}
+
+@media (min-width: 1400px) {
+  .today { grid-template-columns: minmax(270px, 306px) minmax(0, 1fr); }
+  .ring-wrap { width: 170px; height: 170px; }
+}
+
+/* ==========================================================================
+   Панель подробностей сдачи
+
+   1560px — та ширина, начиная с которой рядом со списком остаётся
+   больше 430px. Ниже панели нет, и всё работает по-старому.
+   ========================================================================== */
+
+@media (min-width: 1560px) {
+  .labs-split {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--list-w) minmax(360px, 1fr);
+    gap: var(--sp-8);
+    align-items: start;
+  }
+
+  /* Волосяная линия во всю высоту раздела. Колонки стояли на одном
+     бежевом фоне и читались одним полотном; линия отделяет перечень от
+     подробностей так же, как на «Сегодня» отделена колонка дня. */
+  .labs-split::before {
+    content: ''; position: absolute;
+    left: calc(var(--list-w) + var(--sp-8) / 2);
+    top: 0; bottom: 0; width: 1px;
+    background: var(--line);
+  }
+
+  .labs-side {
+    display: block;
+    position: sticky; top: var(--sp-5);
+    /* Подробности начинаются уровнем ниже перечня: панель не спорит
+       с переключателем представления, а явно идёт следом за ним. */
+    margin-top: 52px;
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding-bottom: var(--sp-6);
+  }
+  .labs-side__head { padding: var(--sp-2) 2px 0; }
+
+  /* Пока ничего не выбрано: тихая подсказка, а не пустое место. */
+  .labs-side__hint {
+    padding: var(--sp-6) 2px;
+    font-size: var(--t-base); line-height: 1.5;
+    color: var(--ink-3); max-width: 30ch;
+  }
+  .labs-side__date {
+    font-size: var(--t-lg); font-weight: var(--w-bold); letter-spacing: -.015em;
+  }
+  .labs-side__ago { font-size: var(--t-sm); color: var(--ink-2); margin-top: 1px; }
+
+  /* Выбранная строка помечена рамкой, а не заливкой: заливка спорила
+     бы с подсветкой отклонений внутри самой строки. */
+  .win.is-on {
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .win.is-on .win__head { background: var(--accent-soft); }
+  .win.is-on .win__date { color: var(--accent-deep); }
+}

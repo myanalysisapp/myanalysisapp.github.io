@@ -1,0 +1,33 @@
+{
+  "name": "Мой Анализ — дневник здоровья",
+  "short_name": "Мой Анализ",
+  "description": "Дневник здоровья: анализы с референсами, инфузии, лекарства, самочувствие и отчёты для врача. Данные хранятся только на вашем устройстве.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1ECE3",
+  "theme_color": "#F1ECE3",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Быстрая запись",
+      "short_name": "Записать",
+      "url": "./index.html#/today",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Карточка безопасности",
+      "short_name": "Карточка",
+      "url": "./index.html#/more/safety",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

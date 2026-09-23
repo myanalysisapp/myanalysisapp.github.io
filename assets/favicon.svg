@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Мой Анализ">
+  <rect width="64" height="64" rx="14" fill="#FFFFFF"/>
+  <path d="M32 8c0 0 15.5 17.2 15.5 26.2A15.5 15.5 0 1 1 16.5 34.2C16.5 25.2 32 8 32 8z"
+        fill="#E74A4C"/>
+  <path d="M14 36.5h8.6l2.4-3.4 2.8 5.6 3.4-14.2 3.6 18.4 2.8-9 2.1 2.6H50"
+        fill="none" stroke="#FFFFFF" stroke-width="3.6"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

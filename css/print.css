@@ -1,0 +1,149 @@
+/* ==========================================================================
+   Печать. Перед печатью узел отчёта клонируется в #print-root,
+   а всё остальное скрывается — так на лист не попадает интерфейс
+   и не появляется пустых страниц.
+   ========================================================================== */
+
+@page {
+  size: A4;
+  margin: 12mm 10mm;
+}
+
+#print-root { display: none; }
+
+@media print {
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10pt;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* на листе — только клон отчёта */
+  body.is-printing > *:not(#print-root) { display: none !important; }
+  body.is-printing #print-root { display: block !important; }
+
+  .no-print { display: none !important; }
+
+  .report-paper {
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .rep-h1 { font-size: 15pt; }
+  .rep-h2 { font-size: 11pt; margin-top: 10pt; page-break-after: avoid; }
+  .rep-meta { font-size: 8pt; color: #333 !important; }
+  .rep-line { font-size: 9pt; }
+
+  .rep-table { font-size: 8pt; page-break-inside: auto; width: 100%; }
+  .rep-table th, .rep-table td {
+    border: .5pt solid #888 !important;
+    padding: 2.5pt 3pt;
+    color: #000 !important;
+  }
+  .rep-table th {
+    background: #EEE !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rep-table thead { display: table-header-group; }   /* шапка на каждой странице */
+  .rep-table tr { page-break-inside: avoid; }
+  .rep-table .lo::after { content: " ↓"; }
+  .rep-table .hi::after { content: " ↑"; }
+
+  .rep-block { page-break-inside: avoid; }
+  .rep-foot { font-size: 7.5pt; color: #444 !important; margin-top: 8pt; }
+
+  /* графики в сводке печатаются как есть */
+  .chart-svg { max-width: 100%; }
+  .c-band { fill: #E8E8E8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .c-line { stroke: #222 !important; }
+  .c-area { fill: none !important; }
+  .c-dot  { fill: #fff !important; stroke: #222 !important; }
+  .c-dot--alert { fill: #222 !important; }
+
+  .c-inf  { stroke: #999 !important; }
+  .c-axis { fill: #444 !important; }
+  .c-draw { animation: none !important; stroke-dashoffset: 0 !important; }
+  .chart-tip, .c-cursor { display: none !important; }
+
+  /* ---- Карточка безопасности: две стороны в размер банковской карты ---- */
+
+  .safety-print-wrap { width: 85.6mm; }
+
+  .safety-cut {
+    width: 85.6mm;
+    margin: 3mm 0;
+    border-top: .4pt dashed #999;
+    font-size: 5.5pt;
+    color: #888 !important;
+    text-align: center;
+    padding-top: 0.8mm;
+  }
+
+  .safety--card {
+    position: relative;
+    background: #fff !important;
+    color: #000 !important;
+    border: .6pt solid #000 !important;
+    border-radius: 3mm !important;
+    box-shadow: none !important;
+    width: 85.6mm;
+    height: 53.98mm;
+    padding: 3.2mm 4mm 4mm !important;
+    overflow: hidden;
+    font-size: 6.2pt;
+    page-break-inside: avoid;
+  }
+  .safety--back { padding-right: 27mm !important; }   /* место под QR */
+
+  .safety__h { font-size: 4.6pt; opacity: 1; color: #666 !important; letter-spacing: .1em; }
+  .safety__name { font-size: 10pt; margin-top: .4mm; letter-spacing: -.01em; }
+  .safety__dx { font-size: 6.8pt; opacity: 1; margin-top: .4mm; }
+  .safety__sec { margin-top: 1.8mm; }
+  .safety__lbl { font-size: 4.6pt; opacity: 1; color: #666 !important; margin-bottom: .3mm; letter-spacing: .08em; }
+  .safety__v { font-size: 6.2pt; line-height: 1.3; }
+  .safety__warn {
+    margin-top: 1.8mm;
+    padding: 1.2mm 1.6mm;
+    font-size: 5.9pt;
+    line-height: 1.26;
+    background: #fff !important;
+    border: .5pt solid #000 !important;
+    border-radius: 1mm;
+  }
+  .safety__side {
+    position: absolute; right: 4mm; bottom: 2mm;
+    font-size: 4.6pt; color: #999 !important; letter-spacing: .06em;
+  }
+  .safety--back .safety__side { right: auto; left: 4mm; }
+
+  .safety__qr {
+    position: absolute;
+    right: 3.4mm; top: 3.4mm;
+    margin: 0; display: block;
+  }
+  .safety__qr svg, .safety__qr img {
+    width: 21mm; height: 21mm; padding: 0; border-radius: 0;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Гематологический лист: колонок-дат бывает много, поэтому на бумаге
+   таблица ужимается, а не обрезается по краю страницы. */
+@media print {
+  .rep-scroll { overflow: visible !important; }
+  .rep-table--wide { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
+  .rep-table--wide th, .rep-table--wide td {
+    font-size: 8.5px !important; padding: 3px 2px !important; white-space: normal !important;
+  }
+  .rep-table__k { position: static !important; min-width: 0 !important; }
+}
